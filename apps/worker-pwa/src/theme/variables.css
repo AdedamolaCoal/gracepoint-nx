@@ -1,0 +1,133 @@
+:root {
+  /* Ionic Color Palette */
+  --ion-color-primary: #2c5f2d;
+  --ion-color-primary-rgb: 44, 95, 45;
+  --ion-color-primary-contrast: #ffffff;
+  --ion-color-primary-contrast-rgb: 255, 255, 255;
+  --ion-color-primary-shade: #275329;
+  --ion-color-primary-tint: #416f43;
+
+  --ion-color-secondary: #3dc2ff;
+  --ion-color-secondary-rgb: 61, 194, 255;
+  --ion-color-secondary-contrast: #ffffff;
+  --ion-color-secondary-contrast-rgb: 255, 255, 255;
+  --ion-color-secondary-shade: #36abe0;
+  --ion-color-secondary-tint: #50c8ff;
+
+  --ion-color-tertiary: #5260ff;
+  --ion-color-tertiary-rgb: 82, 96, 255;
+  --ion-color-tertiary-contrast: #ffffff;
+  --ion-color-tertiary-contrast-rgb: 255, 255, 255;
+  --ion-color-tertiary-shade: #4854e0;
+  --ion-color-tertiary-tint: #6370ff;
+
+  --ion-color-success: #2dd36f;
+  --ion-color-success-rgb: 45, 211, 111;
+  --ion-color-success-contrast: #ffffff;
+  --ion-color-success-contrast-rgb: 255, 255, 255;
+  --ion-color-success-shade: #28ba62;
+  --ion-color-success-tint: #42d77d;
+
+  --ion-color-warning: #ffc409;
+  --ion-color-warning-rgb: 255, 196, 9;
+  --ion-color-warning-contrast: #000000;
+  --ion-color-warning-contrast-rgb: 0, 0, 0;
+  --ion-color-warning-shade: #e0ac08;
+  --ion-color-warning-tint: #ffca22;
+
+  --ion-color-danger: #eb445a;
+  --ion-color-danger-rgb: 235, 68, 90;
+  --ion-color-danger-contrast: #ffffff;
+  --ion-color-danger-contrast-rgb: 255, 255, 255;
+  --ion-color-danger-shade: #cf3c4f;
+  --ion-color-danger-tint: #ed576b;
+
+  --ion-color-medium: #92949c;
+  --ion-color-medium-rgb: 146, 148, 156;
+  --ion-color-medium-contrast: #ffffff;
+  --ion-color-medium-contrast-rgb: 255, 255, 255;
+  --ion-color-medium-shade: #808289;
+  --ion-color-medium-tint: #9d9fa6;
+
+  --ion-color-light: #f4f5f8;
+  --ion-color-light-rgb: 244, 245, 248;
+  --ion-color-light-contrast: #000000;
+  --ion-color-light-contrast-rgb: 0, 0, 0;
+  --ion-color-light-shade: #d7d8da;
+  --ion-color-light-tint: #f5f6f9;
+
+  /* App Design Tokens in rem (1rem = 10px) */
+  --app-radius-sm: 0.8rem;   /* 8px */
+  --app-radius: 1.4rem;      /* 14px */
+  --app-radius-lg: 2.0rem;   /* 20px */
+
+  --app-spacing-xs: 0.4rem;  /* 4px */
+  --app-spacing-sm: 0.8rem;  /* 8px */
+  --app-spacing-md: 1.6rem;  /* 16px */
+  --app-spacing-lg: 2.4rem;  /* 24px */
+  --app-spacing-xl: 3.2rem;  /* 32px */
+
+  /* Auth Layout & Form Design Tokens */
+  --auth-dark-bg: #0c100d;
+  --auth-bg-desktop: #0c100d;
+  --auth-header-bg: #0c100d;
+  --auth-header-border: rgba(255, 255, 255, 0.08);
+
+  --auth-primary-color: #16a34a;
+  --auth-primary-hover: #15803d;
+  --auth-primary-contrast: #ffffff;
+  --auth-accent-gold: #f59e0b;
+  --auth-accent-emerald: #34d399;
+
+  --auth-text-title: #ffffff;
+  --auth-text-subtitle: #94a3b8;
+  --auth-text-label: #e2e8f0;
+  --auth-text-muted: #64748b;
+
+  --auth-input-bg: #141c16;
+  --auth-input-border: rgba(255, 255, 255, 0.12);
+  --auth-input-border-focus: #22c55e;
+  --auth-input-text: #ffffff;
+  --auth-input-placeholder: #64748b;
+  --auth-input-radius: 0.8rem;
+
+  --auth-btn-radius: 0.8rem;
+  --auth-hero-radius: 2.4rem;
+
+  --auth-hero-gradient: linear-gradient(180deg, rgba(12, 16, 13, 0.45) 0%, rgba(12, 16, 13, 0.92) 100%);
+  --auth-hero-badge-bg: rgba(245, 158, 11, 0.14);
+  --auth-hero-badge-text: #fbbf24;
+  --auth-hero-heading-color: #ffffff;
+
+  --auth-footer-text: #94a3b8;
+  --auth-footer-link: #cbd5e1;
+
+  --auth-mobile-bg-overlay: linear-gradient(180deg, rgba(12, 16, 13, 0.88) 0%, rgba(8, 11, 9, 0.96) 100%);
+}
+
+
+
+/* Dark Theme Support */
+@media (prefers-color-scheme: dark) {
+  body {
+    --ion-color-primary: #5ba05d;
+    --ion-color-primary-rgb: 91, 160, 93;
+    --ion-color-primary-shade: #508d52;
+    --ion-color-primary-tint: #6baa6d;
+    --ion-background-color: #121212;
+    --ion-background-color-rgb: 18, 18, 18;
+    --ion-text-color: #ffffff;
+    --ion-text-color-rgb: 255, 255, 255;
+  }
+}
+
+body.dark-theme {
+  --ion-color-primary: #5ba05d;
+  --ion-color-primary-rgb: 91, 160, 93;
+  --ion-color-primary-shade: #508d52;
+  --ion-color-primary-tint: #6baa6d;
+  --ion-background-color: #121212;
+  --ion-background-color-rgb: 18, 18, 18;
+  --ion-text-color: #ffffff;
+  --ion-text-color-rgb: 255, 255, 255;
+}

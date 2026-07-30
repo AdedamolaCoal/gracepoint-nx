@@ -1,0 +1,77 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Me</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  @if (profileStore.isLoading()) {
+    <div class="centered-state">
+      <ion-spinner name="crescent"></ion-spinner>
+    </div>
+  } @else if (profileStore.profile(); as profile) {
+    <ion-list>
+      <ion-item>
+        <ion-label>
+          <p>Full Name</p>
+          <h2>{{ profile.fullName }}</h2>
+        </ion-label>
+      </ion-item>
+      <ion-item>
+        <ion-label>
+          <p>Department</p>
+          <h2>{{ profile.unitName }}</h2>
+        </ion-label>
+      </ion-item>
+      <ion-item>
+        <ion-label>
+          <p>Phone Number</p>
+          <h2>{{ profile.phoneNumber }}</h2>
+        </ion-label>
+      </ion-item>
+    </ion-list>
+
+    <ion-button expand="block" fill="outline" (click)="showChangePin.set(!showChangePin())">
+      Change PIN
+    </ion-button>
+
+    @if (showChangePin()) {
+      <div class="pin-form">
+        <ion-input
+          label="Current PIN"
+          labelPlacement="floating"
+          fill="outline"
+          type="password"
+          inputmode="numeric"
+          [value]="currentPin()"
+          (ionInput)="currentPin.set($any($event.detail.value))"
+        ></ion-input>
+        <ion-input
+          label="New PIN"
+          labelPlacement="floating"
+          fill="outline"
+          type="password"
+          inputmode="numeric"
+          [value]="newPin()"
+          (ionInput)="newPin.set($any($event.detail.value))"
+        ></ion-input>
+
+        @if (pinMessage(); as msg) {
+          <ion-text [color]="pinError() ? 'danger' : 'success'"
+            ><p>{{ msg }}</p></ion-text
+          >
+        }
+
+        <ion-button expand="block" (click)="submitPinChange()" [disabled]="isSubmittingPin()">
+          @if (isSubmittingPin()) {
+            <ion-spinner name="crescent"></ion-spinner>
+          } @else {
+            Update PIN
+          }
+        </ion-button>
+      </div>
+    }
+
+    <ion-button expand="block" color="danger" fill="clear" (click)="logout()"> Log Out </ion-button>
+  }
+</ion-content>

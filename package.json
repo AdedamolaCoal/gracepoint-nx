@@ -1,0 +1,46 @@
+{
+  "name": "gracepoint-frontend",
+  "version": "0.0.0",
+  "private": true,
+  "packageManager": "yarn@4.14.1",
+  "workspaces": [
+    "apps/*",
+    "libs/*"
+  ],
+  "scripts": {
+    "start:admin": "ng serve admin-pwa",
+    "start:worker": "ng serve worker-pwa",
+    "build:admin": "ng build admin-pwa",
+    "build:worker": "ng build worker-pwa",
+    "typecheck": "tsc -p apps/admin-pwa/tsconfig.json --noEmit && tsc -p apps/worker-pwa/tsconfig.json --noEmit"
+  },
+  "dependencies": {
+    "@angular/common": "^21.2.0",
+    "@angular/compiler": "^21.2.0",
+    "@angular/core": "^21.2.0",
+    "@angular/forms": "^21.2.0",
+    "@angular/platform-browser": "^21.2.0",
+    "@angular/router": "^21.2.0",
+    "@capacitor-mlkit/barcode-scanning": "^8.1.0",
+    "@capacitor/app": "^8.1.1",
+    "@capacitor/camera": "^8.2.1",
+    "@capacitor/cli": "^8.4.2",
+    "@capacitor/core": "^8.4.2",
+    "@capacitor/geolocation": "^8.2.0",
+    "@ionic/angular": "^8.8.15",
+    "angularx-qrcode": "^22.0.1",
+    "dexie": "^4.4.4",
+    "rxjs": "~7.8.0",
+    "tslib": "^2.3.0"
+  },
+  "devDependencies": {
+    "@angular/build": "^21.2.19",
+    "@angular/cli": "^21.2.19",
+    "@angular/compiler-cli": "^21.2.0",
+    "@ionic/angular-toolkit": "latest",
+    "jsdom": "^28.0.0",
+    "prettier": "^3.8.1",
+    "typescript": "~5.9.2",
+    "vitest": "^4.0.8"
+  }
+}

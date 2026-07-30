@@ -1,0 +1,10 @@
+{
+  "name": "worker-pwa",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "start": "ng serve --port 3900",
+    "build": "ng build",
+    "test": "ng test"
+  }
+}

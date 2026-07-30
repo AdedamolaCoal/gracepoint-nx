@@ -1,0 +1,51 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Scan to Clock In</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding scan-content">
+  @switch (state()) {
+    @case ('idle') {
+      <div class="centered-state">
+        <ion-button size="large" (click)="startScan()">
+          <ion-icon name="qr-code-outline" slot="start"></ion-icon>
+          Scan QR Code
+        </ion-button>
+
+        @if (errorMessage(); as msg) {
+          <ion-text color="danger"
+            ><p>{{ msg }}</p></ion-text
+          >
+        }
+      </div>
+    }
+    @case ('scanning') {
+      <div class="centered-state">
+        <ion-spinner name="dots"></ion-spinner>
+        <p>Point your camera at the QR code…</p>
+      </div>
+    }
+    @case ('locating') {
+      <div class="centered-state">
+        <ion-spinner name="dots"></ion-spinner>
+        <p>Checking your location…</p>
+      </div>
+    }
+    @case ('submitting') {
+      <div class="centered-state">
+        <ion-spinner name="dots"></ion-spinner>
+        <p>Clocking you in…</p>
+      </div>
+    }
+    @case ('result') {
+      @if (result(); as r) {
+        <div class="centered-state result-state" [class.success]="r.success">
+          <h2>{{ r.success ? 'Checked in successfully!' : 'Could not check in' }}</h2>
+          <p>{{ r.message }}</p>
+          <ion-button expand="block" (click)="reset()">Done</ion-button>
+        </div>
+      }
+    }
+  }
+</ion-content>

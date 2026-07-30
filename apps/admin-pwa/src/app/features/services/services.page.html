@@ -1,0 +1,279 @@
+<ion-content class="services-content">
+  <div class="services-page-header">
+    <div class="services-page-header__left">
+      <h1 class="services-title">Service Events</h1>
+      @if (store.currentService(); as current) {
+        <ion-badge color="success" class="services-badge">
+          <ion-icon name="sparkles-outline"></ion-icon>
+          Active: {{ current.name }}
+        </ion-badge>
+      }
+    </div>
+    <ion-button class="services-add-btn" color="primary" (click)="openCreateModal()">
+      <ion-icon name="add-outline" slot="start"></ion-icon>
+      New Service Event
+    </ion-button>
+  </div>
+
+  @if (store.isLoading()) {
+    <div class="services-state-centered">
+      <ion-spinner name="crescent" color="primary"></ion-spinner>
+      <ion-note class="services-state-note">Loading service events...</ion-note>
+    </div>
+  } @else if (store.services().length === 0) {
+    <div class="services-state-centered">
+      <ion-icon name="calendar-outline" class="services-empty-icon"></ion-icon>
+      <h3 class="services-empty-title">No Service Events Created</h3>
+      <ion-note class="services-state-note">Create a new service event to generate check-in QR codes for workers.</ion-note>
+      <ion-button class="services-empty-btn" color="primary" (click)="openCreateModal()">
+        <ion-icon name="add-outline" slot="start"></ion-icon>
+        Create First Event
+      </ion-button>
+    </div>
+  } @else {
+    <ion-grid class="services-grid">
+      <ion-row class="services-row">
+        @for (service of store.services(); track service.id) {
+          <ion-col size="12" sizeMd="6" sizeLg="4" class="services-col">
+            <ion-card class="service-card" [class.service-card--active]="service.status === 'Open'">
+              <ion-card-header class="service-card__header">
+                <div class="service-card__badge-wrapper">
+                  @if (service.status === 'Open') {
+                    <ion-chip color="success" class="service-card__chip">
+                      <ion-icon name="sparkles-outline"></ion-icon>
+                      <ion-label>LIVE NOW</ion-label>
+                    </ion-chip>
+                  } @else if (service.status === 'Scheduled') {
+                    <ion-chip color="primary" class="service-card__chip">
+                      <ion-icon name="time-outline"></ion-icon>
+                      <ion-label>SCHEDULED</ion-label>
+                    </ion-chip>
+                  } @else {
+                    <ion-chip color="medium" class="service-card__chip">
+                      <ion-icon name="close-circle-outline"></ion-icon>
+                      <ion-label>CLOSED</ion-label>
+                    </ion-chip>
+                  }
+                </div>
+                <ion-card-title class="service-card__title">{{ service.name }}</ion-card-title>
+                <ion-card-subtitle class="service-card__date">
+                  <ion-icon name="calendar-outline"></ion-icon>
+                  {{ service.serviceDate | date:'fullDate' }}
+                </ion-card-subtitle>
+              </ion-card-header>
+
+              <ion-card-content class="service-card__content">
+                <div class="service-card__info-row">
+                  <div class="service-card__info-item">
+                    <ion-icon name="time-outline"></ion-icon>
+                    <span>{{ service.clockInWindowStart | date:'shortTime' }} - {{ service.clockInWindowEnd | date:'shortTime' }}</span>
+                  </div>
+                </div>
+
+                <div class="service-card__actions">
+                  @if (service.qrToken) {
+                    <ion-button
+                      class="service-card__btn"
+                      fill="solid"
+                      color="primary"
+                      size="small"
+                      (click)="showQr(service)"
+                    >
+                      <ion-icon name="qr-code-outline" slot="start"></ion-icon>
+                      View QR Code
+                    </ion-button>
+                  }
+
+                  @if (service.status === 'Open') {
+                    <ion-button
+                      class="service-card__btn"
+                      fill="outline"
+                      color="danger"
+                      size="small"
+                      (click)="closeService(service)"
+                    >
+                      <ion-icon name="close-circle-outline" slot="start"></ion-icon>
+                      Close Event
+                    </ion-button>
+                  }
+                </div>
+              </ion-card-content>
+            </ion-card>
+          </ion-col>
+        }
+      </ion-row>
+    </ion-grid>
+  }
+</ion-content>
+
+<!-- Create Service Modal -->
+<ion-modal
+  class="services-modal"
+  [isOpen]="showCreateModal()"
+  (didDismiss)="showCreateModal.set(false)"
+>
+  <ng-template>
+    <ion-header class="modal-header">
+      <ion-toolbar class="modal-toolbar">
+        <ion-title class="modal-title">New Service Event</ion-title>
+        <ion-buttons slot="end">
+          <ion-button color="medium" (click)="showCreateModal.set(false)">Close</ion-button>
+        </ion-buttons>
+      </ion-toolbar>
+    </ion-header>
+
+    <ion-content class="modal-content">
+      <div class="modal-form">
+        <ion-input
+          class="modal-input"
+          label="Event Name *"
+          labelPlacement="floating"
+          fill="outline"
+          placeholder="e.g. Sunday Celebration Service"
+          [value]="name()"
+          (ionInput)="name.set($any($event.detail.value))"
+        ></ion-input>
+
+        <div class="modal-field">
+          <label class="modal-label">Service Date *</label>
+          <ion-datetime-button datetime="service-date-picker" class="modal-datetime-btn"></ion-datetime-button>
+          <ion-popover [keepContentsMounted]="true">
+            <ng-template>
+              <ion-datetime
+                id="service-date-picker"
+                presentation="date"
+                [value]="serviceDate()"
+                (ionChange)="serviceDate.set($any($event.detail.value))"
+              ></ion-datetime>
+            </ng-template>
+          </ion-popover>
+        </div>
+
+        <div class="modal-row">
+          <ion-input
+            class="modal-input"
+            label="Start Time *"
+            labelPlacement="floating"
+            fill="outline"
+            type="time"
+            [value]="scheduledStart()"
+            (ionInput)="scheduledStart.set($any($event.detail.value))"
+          ></ion-input>
+
+          <ion-input
+            class="modal-input"
+            label="End Time *"
+            labelPlacement="floating"
+            fill="outline"
+            type="time"
+            [value]="scheduledEnd()"
+            (ionInput)="scheduledEnd.set($any($event.detail.value))"
+          ></ion-input>
+        </div>
+
+        <div class="modal-row">
+          <ion-input
+            class="modal-input"
+            label="Latitude *"
+            labelPlacement="floating"
+            fill="outline"
+            type="number"
+            [value]="churchLat()"
+            (ionInput)="churchLat.set($any($event.detail.value))"
+          ></ion-input>
+
+          <ion-input
+            class="modal-input"
+            label="Longitude *"
+            labelPlacement="floating"
+            fill="outline"
+            type="number"
+            [value]="churchLng()"
+            (ionInput)="churchLng.set($any($event.detail.value))"
+          ></ion-input>
+        </div>
+
+        <ion-button
+          fill="outline"
+          color="secondary"
+          size="small"
+          class="modal-loc-btn"
+          (click)="useCurrentLocation()"
+        >
+          <ion-icon name="navigate-outline" slot="start"></ion-icon>
+          Use Current Geolocation
+        </ion-button>
+
+        <ion-input
+          class="modal-input"
+          label="Geofence Radius (Meters)"
+          labelPlacement="floating"
+          fill="outline"
+          type="number"
+          [value]="geoRadiusMeters()"
+          (ionInput)="geoRadiusMeters.set($any($event.detail.value))"
+        ></ion-input>
+
+        @if (formError(); as msg) {
+          <div class="modal-error-banner">
+            <ion-icon name="alert-circle-outline"></ion-icon>
+            <span>{{ msg }}</span>
+          </div>
+        }
+
+        <ion-button
+          class="modal-submit-btn"
+          expand="block"
+          color="primary"
+          (click)="submitCreate()"
+          [disabled]="isSubmitting()"
+        >
+          @if (isSubmitting()) {
+            <ion-spinner name="crescent"></ion-spinner>
+            <span>Creating Event...</span>
+          } @else {
+            <span>Create Event</span>
+          }
+        </ion-button>
+      </div>
+    </ion-content>
+  </ng-template>
+</ion-modal>
+
+<!-- QR Code Modal -->
+<ion-modal
+  class="qr-modal"
+  [isOpen]="qrModalService() !== null"
+  (didDismiss)="qrModalService.set(null)"
+>
+  <ng-template>
+    <ion-header class="modal-header">
+      <ion-toolbar class="modal-toolbar">
+        <ion-title class="modal-title">Worker Check-in QR</ion-title>
+        <ion-buttons slot="end">
+          <ion-button color="medium" (click)="qrModalService.set(null)">Done</ion-button>
+        </ion-buttons>
+      </ion-toolbar>
+    </ion-header>
+
+    <ion-content class="modal-content modal-content--qr">
+      @if (qrModalService(); as service) {
+        <div class="qr-card">
+          <h2 class="qr-card__title">{{ service.name }}</h2>
+          <p class="qr-card__subtitle">{{ service.serviceDate | date:'fullDate' }}</p>
+
+          <div class="qr-card__code-container">
+            <app-qr-code-branded
+              [data]="clockInUrl()"
+              [size]="240"
+            ></app-qr-code-branded>
+          </div>
+
+          <ion-note class="qr-card__hint">
+            Display this QR code for workers to scan via their Worker PWA to record attendance.
+          </ion-note>
+        </div>
+      }
+    </ion-content>
+  </ng-template>
+</ion-modal>

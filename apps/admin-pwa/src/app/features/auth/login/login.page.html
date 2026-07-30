@@ -1,0 +1,84 @@
+<div class="auth-form">
+  <div class="auth-form__header">
+    <h1 class="auth-form__title">
+      Welcome to <span class="auth-form__title-highlight">Gracepoint</span> Admin
+    </h1>
+
+    <p class="auth-form__subtitle">
+      Please enter your credentials to login into your account
+    </p>
+  </div>
+
+  <form (ngSubmit)="onSubmit($event)" class="auth-form__body">
+    <div class="auth-form__field">
+      <label class="auth-form__label">
+        Email or Phone Number<span class="auth-form__required">*</span>
+      </label>
+      <ion-input
+        class="auth-form__input"
+        type="email"
+        placeholder="church@admin.com"
+        [value]="email()"
+        (ionInput)="email.set($any($event.detail.value))"
+      ></ion-input>
+    </div>
+
+    <div class="auth-form__field">
+      <label class="auth-form__label">
+        Password<span class="auth-form__required">*</span>
+      </label>
+      <ion-input
+        class="auth-form__input"
+        [type]="showPassword() ? 'text' : 'password'"
+        placeholder="••••••••"
+        [value]="password()"
+        (ionInput)="password.set($any($event.detail.value))"
+      >
+        <button
+          slot="end"
+          type="button"
+          class="auth-form__eye-btn"
+          (click)="togglePasswordVisibility()"
+          aria-label="Toggle password visibility"
+        >
+          <ion-icon [name]="showPassword() ? 'eye-off-outline' : 'eye-outline'"></ion-icon>
+        </button>
+      </ion-input>
+    </div>
+
+    <!-- <div class="auth-form__checkbox-wrapper">
+      <ion-checkbox
+        class="auth-form__checkbox"
+        [checked]="rememberMe()"
+        (ionChange)="rememberMe.set($event.detail.checked)"
+      >
+        Remember Me
+      </ion-checkbox>
+    </div> -->
+
+    @if (errorMessage(); as msg) {
+      <div class="auth-form__error">
+        <ion-text color="danger"><p>{{ msg }}</p></ion-text>
+      </div>
+    }
+
+    <ion-button
+      class="auth-form__button"
+      expand="block"
+      type="submit"
+      [disabled]="isSubmitting()"
+    >
+      @if (isSubmitting()) {
+        <ion-spinner name="crescent"></ion-spinner>
+        Signing in...
+      } @else {
+        Sign in
+      }
+    </ion-button>
+
+    <div class="auth-form__footer-text">
+      <span>Don't have a Profile?</span>
+      <a class="auth-form__link" (click)="$event.preventDefault()">Create now</a>
+    </div>
+  </form>
+</div>

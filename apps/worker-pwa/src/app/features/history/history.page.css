@@ -1,0 +1,6 @@
+.centered-state {
+  display: flex;
+  justify-content: center;
+  padding: var(--app-spacing-lg) 0;
+  color: var(--ion-color-medium);
+}

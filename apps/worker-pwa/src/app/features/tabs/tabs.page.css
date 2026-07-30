@@ -1,0 +1,5 @@
+/* Custom tabs styling */
+ion-tab-bar {
+  --background: var(--ion-background-color, #ffffff);
+  --border-color: var(--ion-color-light-shade, #e0e0e0);
+}

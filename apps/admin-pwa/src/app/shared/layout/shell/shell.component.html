@@ -1,0 +1,70 @@
+<ion-split-pane contentId="main-content" when="md" class="admin-split-pane">
+  <!-- Sidebar Navigation -->
+  <ion-menu contentId="main-content" class="admin-menu">
+    <div class="admin-menu__header">
+      <div class="admin-menu__brand">
+        <div class="admin-menu__logo-box">
+          <img src="/general/gpicc.jpg" alt="Gracepoint Logo" class="admin-menu__logo" />
+        </div>
+        <div class="admin-menu__title-group">
+          <h2 class="admin-menu__title">Gracepoint</h2>
+          <span class="admin-menu__subtitle">Worker Management</span>
+        </div>
+      </div>
+    </div>
+
+    <ion-content class="admin-menu__content">
+      <div class="admin-menu__section-label">NAVIGATION</div>
+
+      <ion-list class="admin-menu__list" lines="none">
+        @for (item of visibleNavItems(); track item.path) {
+          <ion-menu-toggle auto-hide="false">
+            <ion-item
+              class="admin-menu__item"
+              [routerLink]="item.path"
+              routerLinkActive="active-nav-item"
+              button
+              detail="false"
+            >
+              <ion-icon [name]="item.icon" slot="start" class="admin-menu__icon"></ion-icon>
+              <ion-label class="admin-menu__label">{{ item.label }}</ion-label>
+            </ion-item>
+          </ion-menu-toggle>
+        }
+      </ion-list>
+    </ion-content>
+  </ion-menu>
+
+  <!-- Main Web Content Layout with Top Header -->
+  <div id="main-content" class="admin-main">
+    <header class="admin-top-header">
+      <div class="admin-top-header__left">
+        <ion-menu-button class="admin-top-header__menu-btn"></ion-menu-button>
+        <span class="admin-top-header__portal-title">Gracepoint Admin Portal</span>
+      </div>
+
+      <div class="admin-top-header__right">
+        @if (currentAdmin(); as admin) {
+          <div class="admin-top-header__profile">
+            <div class="admin-top-header__avatar">
+              {{ admin.name.charAt(0).toUpperCase() }}
+            </div>
+            <div class="admin-top-header__user-info">
+              <span class="admin-top-header__user-name">{{ admin.name }}</span>
+              <span class="admin-top-header__role-pill">{{ admin.role }}</span>
+            </div>
+          </div>
+
+          <button type="button" class="admin-top-header__logout-btn" (click)="logout()" title="Log out">
+            <ion-icon name="log-out-outline"></ion-icon>
+            <span>Log Out</span>
+          </button>
+        }
+      </div>
+    </header>
+
+    <main class="admin-main__body">
+      <ion-router-outlet></ion-router-outlet>
+    </main>
+  </div>
+</ion-split-pane>

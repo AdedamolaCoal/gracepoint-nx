@@ -1,0 +1,26 @@
+.centered-state {
+  display: flex;
+  justify-content: center;
+  padding: var(--app-spacing-lg) 0;
+}
+
+.service-card {
+  border-radius: var(--app-radius);
+}
+
+.service-status {
+  color: var(--ion-color-medium);
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  margin: 0 0 4px;
+}
+
+.last-checkin {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: var(--app-spacing-lg);
+  padding: var(--app-spacing-md);
+  background: var(--ion-color-light);
+  border-radius: var(--app-radius);
+}

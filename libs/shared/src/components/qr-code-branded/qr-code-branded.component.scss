@@ -1,0 +1,17 @@
+.qr-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.qr-logo {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 20%;
+  height: 20%;
+  background: var(--ion-text-color);
+  border-radius: var(--app-radius);
+  padding: 4px;
+  box-shadow: 0 0 0 4px var(--ion-text-color);
+}

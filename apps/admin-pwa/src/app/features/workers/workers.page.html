@@ -1,0 +1,225 @@
+<ion-content class="workers-content">
+  <div class="workers-page-header">
+    <div class="workers-page-header__top">
+      <div class="workers-page-header__left">
+        <h1 class="workers-title">Workers Directory</h1>
+        @if (store.pendingCount() > 0) {
+          <ion-badge color="warning" class="workers-badge">{{ store.pendingCount() }} Pending</ion-badge>
+        }
+      </div>
+      <ion-button class="workers-add-btn" color="primary" (click)="openCreateModal()">
+        <ion-icon name="add-outline" slot="start"></ion-icon>
+        Add Worker
+      </ion-button>
+    </div>
+
+    <div class="workers-page-header__controls">
+      <ion-searchbar
+        class="workers-searchbar"
+        placeholder="Search worker by name, unit, or phone..."
+        [value]="searchTerm()"
+        (ionInput)="searchTerm.set($any($event.detail.value))"
+      ></ion-searchbar>
+
+      <ion-segment
+        class="workers-segment"
+        [value]="statusFilter()"
+        (ionChange)="statusFilter.set($any($event.detail.value))"
+      >
+        <ion-segment-button value="all">
+          <ion-label>All Workers</ion-label>
+        </ion-segment-button>
+        <ion-segment-button value="pending">
+          <ion-label>Pending</ion-label>
+        </ion-segment-button>
+        <ion-segment-button value="active">
+          <ion-label>Active</ion-label>
+        </ion-segment-button>
+        <ion-segment-button value="inactive">
+          <ion-label>Inactive</ion-label>
+        </ion-segment-button>
+      </ion-segment>
+    </div>
+  </div>
+
+  @if (store.isLoading()) {
+    <div class="workers-state-centered">
+      <ion-spinner name="crescent" color="primary"></ion-spinner>
+      <ion-note class="workers-state-note">Loading workers directory...</ion-note>
+    </div>
+  } @else if (filteredWorkers().length === 0) {
+    <div class="workers-state-centered">
+      <ion-icon name="people-outline" class="workers-empty-icon"></ion-icon>
+      <h3 class="workers-empty-title">No Workers Found</h3>
+      <ion-note class="workers-state-note">No workers match your search or status filter.</ion-note>
+    </div>
+  } @else {
+    <ion-grid class="workers-grid">
+      <ion-row class="workers-row">
+        @for (worker of filteredWorkers(); track worker.id) {
+          <ion-col size="12" sizeMd="6" sizeLg="4" class="workers-col">
+            <ion-card class="worker-card">
+              <ion-card-header class="worker-card__header">
+                <ion-avatar class="worker-card__avatar">
+                  <ion-icon name="person-outline"></ion-icon>
+                </ion-avatar>
+                <div class="worker-card__titles">
+                  <ion-card-title class="worker-card__name">{{ worker.fullName }}</ion-card-title>
+                  <ion-card-subtitle class="worker-card__unit">
+                    <ion-icon name="briefcase-outline"></ion-icon>
+                    {{ worker.unitName || 'Unassigned Unit' }}
+                  </ion-card-subtitle>
+                </div>
+                <div class="worker-card__status-badge">
+                  @if (!worker.isApproved) {
+                    <ion-chip color="warning" class="worker-card__chip">
+                      <ion-icon name="alert-circle-outline"></ion-icon>
+                      <ion-label>Pending Approval</ion-label>
+                    </ion-chip>
+                  } @else if (!worker.isActive) {
+                    <ion-chip color="medium" class="worker-card__chip">
+                      <ion-icon name="ban-outline"></ion-icon>
+                      <ion-label>Inactive</ion-label>
+                    </ion-chip>
+                  } @else {
+                    <ion-chip color="success" class="worker-card__chip">
+                      <ion-icon name="checkmark-circle-outline"></ion-icon>
+                      <ion-label>Active</ion-label>
+                    </ion-chip>
+                  }
+                </div>
+              </ion-card-header>
+
+              <ion-card-content class="worker-card__content">
+                <div class="worker-card__meta">
+                  <ion-icon name="call-outline"></ion-icon>
+                  <span>{{ worker.phoneNumber }}</span>
+                </div>
+
+                <div class="worker-card__actions">
+                  @if (!worker.isApproved) {
+                    <ion-button
+                      class="worker-card__action-btn"
+                      fill="solid"
+                      color="success"
+                      size="small"
+                      (click)="approve(worker)"
+                    >
+                      <ion-icon name="checkmark-circle-outline" slot="start"></ion-icon>
+                      Approve Worker
+                    </ion-button>
+                  } @else if (!worker.isActive) {
+                    <ion-button
+                      class="worker-card__action-btn"
+                      fill="outline"
+                      color="tertiary"
+                      size="small"
+                      (click)="reactivate(worker)"
+                    >
+                      <ion-icon name="refresh-outline" slot="start"></ion-icon>
+                      Reactivate
+                    </ion-button>
+                  } @else {
+                    <ion-button
+                      class="worker-card__action-btn"
+                      fill="outline"
+                      color="danger"
+                      size="small"
+                      (click)="deactivate(worker)"
+                    >
+                      <ion-icon name="ban-outline" slot="start"></ion-icon>
+                      Deactivate
+                    </ion-button>
+                  }
+                </div>
+              </ion-card-content>
+            </ion-card>
+          </ion-col>
+        }
+      </ion-row>
+    </ion-grid>
+  }
+</ion-content>
+
+<!-- Create worker modal -->
+<ion-modal
+  class="workers-modal"
+  [isOpen]="showCreateModal()"
+  (didDismiss)="showCreateModal.set(false)"
+>
+  <ng-template>
+    <ion-header class="modal-header">
+      <ion-toolbar class="modal-toolbar">
+        <ion-title class="modal-title">Add New Worker</ion-title>
+        <ion-buttons slot="end">
+          <ion-button color="medium" (click)="showCreateModal.set(false)">Close</ion-button>
+        </ion-buttons>
+      </ion-toolbar>
+    </ion-header>
+
+    <ion-content class="modal-content">
+      <div class="modal-form">
+        <ion-input
+          class="modal-input"
+          label="Full Name *"
+          labelPlacement="floating"
+          fill="outline"
+          placeholder="e.g. John Doe"
+          [value]="newFullName()"
+          (ionInput)="newFullName.set($any($event.detail.value))"
+        ></ion-input>
+
+        <ion-input
+          class="modal-input"
+          label="Phone Number *"
+          labelPlacement="floating"
+          fill="outline"
+          type="tel"
+          placeholder="e.g. 08012345678"
+          [value]="newPhoneNumber()"
+          (ionInput)="newPhoneNumber.set($any($event.detail.value))"
+        ></ion-input>
+
+        <ion-select
+          class="modal-select"
+          label="Department / Unit *"
+          labelPlacement="floating"
+          fill="outline"
+          placeholder="Select Department"
+          [value]="newUnitId()"
+          (ionChange)="newUnitId.set($any($event.detail.value))"
+        >
+          @for (unit of store.units(); track unit.id) {
+            <ion-select-option [value]="unit.id">{{ unit.name }}</ion-select-option>
+          }
+        </ion-select>
+
+        @if (formError(); as msg) {
+          <div class="modal-error-banner">
+            <ion-icon name="alert-circle-outline"></ion-icon>
+            <span>{{ msg }}</span>
+          </div>
+        }
+
+        <ion-button
+          class="modal-submit-btn"
+          expand="block"
+          color="primary"
+          (click)="submitCreate()"
+          [disabled]="isSubmitting()"
+        >
+          @if (isSubmitting()) {
+            <ion-spinner name="crescent"></ion-spinner>
+            <span>Saving Worker...</span>
+          } @else {
+            <span>Add Worker</span>
+          }
+        </ion-button>
+
+        <ion-note class="modal-hint">
+          Worker profiles will require PIN creation upon first login.
+        </ion-note>
+      </div>
+    </ion-content>
+  </ng-template>
+</ion-modal>

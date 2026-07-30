@@ -1,0 +1,12 @@
+.centered-state {
+  display: flex;
+  justify-content: center;
+  padding: var(--app-spacing-lg) 0;
+}
+
+.pin-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--app-spacing-sm);
+  margin: var(--app-spacing-md) 0;
+}

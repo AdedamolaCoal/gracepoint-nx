@@ -1,0 +1,33 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Attendance History</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-refresher slot="fixed" (ionRefresh)="onRefresh($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+
+  @if (historyStore.isLoading()) {
+    <div class="centered-state">
+      <ion-spinner name="crescent"></ion-spinner>
+    </div>
+  } @else if (historyStore.entries().length === 0) {
+    <div class="centered-state">
+      <p>No attendance records yet.</p>
+    </div>
+  } @else {
+    <ion-list>
+      @for (entry of historyStore.entries(); track entry.serviceEventId) {
+        <ion-item>
+          <ion-label>
+            <h2>{{ entry.serviceName }}</h2>
+            <p>{{ entry.serviceDate | date: 'EEEE, MMM d, y' }}</p>
+          </ion-label>
+          <app-status-pill [status]="entry.status" slot="end" />
+        </ion-item>
+      }
+    </ion-list>
+  }
+</ion-content>

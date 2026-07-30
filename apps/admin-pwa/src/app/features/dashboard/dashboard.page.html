@@ -1,0 +1,41 @@
+<ion-content class="ion-padding">
+  <div class="dashboard-banner">
+    <h1 class="dashboard-title">Dashboard Overview</h1>
+    <p class="dashboard-subtitle">Real-time attendance and worker activity summary.</p>
+  </div>
+
+  @if (store.isLoading()) {
+    <div class="centered-state">
+      <ion-spinner name="crescent" color="primary"></ion-spinner>
+    </div>
+  } @else if (store.currentService(); as service) {
+    <ion-card class="service-card">
+      <ion-card-content>
+        <p class="service-status">{{ service.status === 'Open' ? 'Happening now' : 'Coming up' }}</p>
+        <h2>{{ service.name }}</h2>
+        <p>{{ service.serviceDate | date: 'EEEE, MMM d' }}</p>
+      </ion-card-content>
+    </ion-card>
+
+    @if (store.attendanceSummary(); as summary) {
+      <div class="stat-grid">
+        <app-stat-card [value]="summary.presentCount" label="Present" color="success" />
+        <app-stat-card [value]="summary.lateCount" label="Late" color="warning" />
+        <app-stat-card [value]="summary.absentCount" label="Absent" color="danger" />
+      </div>
+    }
+  } @else {
+    <div class="centered-state">
+      <p>No service scheduled right now.</p>
+    </div>
+  }
+
+  @if (store.pendingWorkers().length > 0) {
+    <ion-card class="pending-card" [routerLink]="'/app/workers'">
+      <ion-card-content class="pending-content">
+        <span>Pending worker approvals</span>
+        <ion-badge color="warning">{{ store.pendingWorkers().length }}</ion-badge>
+      </ion-card-content>
+    </ion-card>
+  }
+</ion-content>

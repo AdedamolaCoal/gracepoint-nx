@@ -1,0 +1,83 @@
+<ion-content class="auth-layout-content" [scrollY]="true">
+  <div class="auth-layout">
+    <!-- Main Left Section (Header, Form, Scriptures on Mobile, Footer) -->
+    <div class="auth-layout__left">
+      <header class="auth-layout__header">
+        <div class="auth-layout__header-brand">
+          <img [src]="store.logoSrc()" [alt]="store.logoAlt()" class="auth-layout__logo" />
+          <!-- <span class="auth-layout__brand-title">GRACEPOINT</span> -->
+        </div>
+      </header>
+
+      <main class="auth-layout__main">
+        <!-- Mobile Scriptures (Visible only on mobile above the form) -->
+        <div class="auth-layout__mobile-scripture-section">
+          <div class="auth-layout__hero-badge auth-layout__hero-badge--mobile">
+            {{ store.heroBadge() }}
+          </div>
+
+          @if (store.currentScripture(); as scripture) {
+            <div
+              class="auth-layout__scripture"
+              [class.auth-layout__scripture--fading]="store.isFading()"
+            >
+              <p class="auth-layout__scripture-text">
+                “{{ scripture.text }}”
+              </p>
+              <span class="auth-layout__scripture-ref">
+                — {{ scripture.reference }}
+              </span>
+            </div>
+          }
+        </div>
+
+        <!-- Router Outlet for Login Page -->
+        <div class="auth-layout__form-container">
+          <router-outlet></router-outlet>
+          <ng-content></ng-content>
+        </div>
+      </main>
+
+      <!-- Shared Full-Width Footer -->
+      <footer class="auth-layout__footer">
+        <span class="auth-layout__copyright">© {{ store.copyrightYear() }} {{ store.copyrightCompany() }}</span>
+        <div class="auth-layout__footer-links">
+          <span class="auth-layout__footer-link">All rights reserved</span>
+          <a href="#" (click)="$event.preventDefault()" class="auth-layout__footer-link auth-layout__footer-link--interactive">Privacy Policy</a>
+        </div>
+      </footer>
+    </div>
+
+    <!-- Desktop Right Hero Section (Full Height Side Image with Dark Overlay) -->
+    <div class="auth-layout__right">
+      <div class="auth-layout__hero">
+        <img
+          [src]="store.heroImageSrc()"
+          [alt]="store.heroImageAlt()"
+          class="auth-layout__hero-img"
+          loading="eager"
+        />
+        <div class="auth-layout__hero-overlay"></div>
+        <div class="auth-layout__hero-content">
+          <div class="auth-layout__hero-badge">
+            {{ store.heroBadge() }}
+          </div>
+
+          @if (store.currentScripture(); as scripture) {
+            <div
+              class="auth-layout__scripture"
+              [class.auth-layout__scripture--fading]="store.isFading()"
+            >
+              <p class="auth-layout__scripture-text">
+                “{{ scripture.text }}”
+              </p>
+              <span class="auth-layout__scripture-ref">
+                — {{ scripture.reference }}
+              </span>
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+</ion-content>

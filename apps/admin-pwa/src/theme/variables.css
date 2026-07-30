@@ -1,0 +1,135 @@
+:root {
+  /* Font Family Definition (1rem = 10px) */
+  html {
+    font-size: 62.5%;
+  }
+
+  --ion-font-family: 'Manrope', -apple-system, BlinkMacSystemFont, sans-serif;
+  --ion-background-color: #ffffff;
+  --ion-background-color-rgb: 255, 255, 255;
+  --ion-text-color: #0f172a;
+  --ion-text-color-rgb: 15, 23, 42;
+
+  /* Primary Brand Theme (#8b1e24 Gracepoint Crimson Red) */
+  --ion-color-primary: #8b1e24;
+  --ion-color-primary-rgb: 139, 30, 36;
+  --ion-color-primary-contrast: #ffffff;
+  --ion-color-primary-contrast-rgb: 255, 255, 255;
+  --ion-color-primary-shade: #7a1a1f;
+  --ion-color-primary-tint: #9e353a;
+
+  --ion-color-secondary: #991b1b;
+  --ion-color-secondary-rgb: 153, 27, 27;
+  --ion-color-secondary-contrast: #ffffff;
+  --ion-color-secondary-contrast-rgb: 255, 255, 255;
+  --ion-color-secondary-shade: #871818;
+  --ion-color-secondary-tint: #a33232;
+
+
+  --ion-color-tertiary: #6366f1;
+  --ion-color-tertiary-rgb: 99, 102, 241;
+  --ion-color-tertiary-contrast: #ffffff;
+  --ion-color-tertiary-contrast-rgb: 255, 255, 255;
+  --ion-color-tertiary-shade: #575ae4;
+  --ion-color-tertiary-tint: #7375f2;
+
+  --ion-color-success: #16a34a;
+  --ion-color-success-rgb: 22, 163, 74;
+  --ion-color-success-contrast: #ffffff;
+  --ion-color-success-contrast-rgb: 255, 255, 255;
+  --ion-color-success-shade: #138f41;
+  --ion-color-success-tint: #2dac5c;
+
+  --ion-color-warning: #d97706;
+  --ion-color-warning-rgb: 217, 119, 6;
+  --ion-color-warning-contrast: #ffffff;
+  --ion-color-warning-contrast-rgb: 255, 255, 255;
+  --ion-color-warning-shade: #bf6905;
+  --ion-color-warning-tint: #dd851f;
+
+  --ion-color-danger: #dc2626;
+  --ion-color-danger-rgb: 220, 38, 38;
+  --ion-color-danger-contrast: #ffffff;
+  --ion-color-danger-contrast-rgb: 255, 255, 255;
+  --ion-color-danger-shade: #c22121;
+  --ion-color-danger-tint: #e03c3c;
+
+  --ion-color-medium: #64748b;
+  --ion-color-medium-rgb: 100, 116, 139;
+  --ion-color-medium-contrast: #ffffff;
+  --ion-color-medium-contrast-rgb: 255, 255, 255;
+  --ion-color-medium-shade: #58667a;
+  --ion-color-medium-tint: #748297;
+
+  --ion-color-light: #f8fafc;
+  --ion-color-light-rgb: 248, 250, 252;
+  --ion-color-light-contrast: #0f172a;
+  --ion-color-light-contrast-rgb: 15, 23, 42;
+  --ion-color-light-shade: #daedef;
+  --ion-color-light-tint: #fbfcfd;
+
+  /* App Core Design System Tokens */
+  --app-bg-white: #ffffff;
+  --app-surface: #ffffff;
+  --app-surface-subtle: #f8fafc;
+  --app-border: #e2e8f0;
+  --app-border-subtle: #f1f5f9;
+  
+  --app-text-main: #0f172a;
+  --app-text-sub: #475569;
+  --app-text-muted: #94a3b8;
+
+  --app-primary: #8b1e24;
+  --app-primary-light: #991b1b;
+
+  --app-success: #16a34a;
+  --app-warning: #d97706;
+  --app-danger: #dc2626;
+
+  --app-radius-sm: 0.8rem;
+  --app-radius-md: 1.2rem;
+  --app-radius-lg: 1.6rem;
+
+  --app-spacing-xs: 0.4rem;
+  --app-spacing-sm: 0.8rem;
+  --app-spacing-md: 1.6rem;
+  --app-spacing-lg: 2.4rem;
+  --app-spacing-xl: 3.2rem;
+
+  /* Auth Tokens */
+  --auth-dark-bg: #0c100d;
+  --auth-bg-desktop: #0c100d;
+  --auth-header-bg: #0c100d;
+  --auth-header-border: color-mix(in srgb, var(--app-bg-white) 8%, transparent);
+
+  --auth-primary-color: #16a34a;
+  --auth-primary-hover: #15803d;
+  --auth-primary-contrast: #ffffff;
+  --auth-accent-gold: #f59e0b;
+  --auth-accent-emerald: #34d399;
+
+  --auth-text-title: #ffffff;
+  --auth-text-subtitle: #94a3b8;
+  --auth-text-label: #e2e8f0;
+  --auth-text-muted: #64748b;
+
+  --auth-input-bg: #141c16;
+  --auth-input-border: color-mix(in srgb, var(--app-bg-white) 12%, transparent);
+  --auth-input-border-focus: #22c55e;
+  --auth-input-text: #ffffff;
+  --auth-input-placeholder: #64748b;
+  --auth-input-radius: 0.8rem;
+
+  --auth-btn-radius: 0.8rem;
+  --auth-hero-radius: 2.4rem;
+
+  --auth-hero-gradient: linear-gradient(180deg, color-mix(in srgb, var(--auth-dark-bg) 45%, transparent) 0%, color-mix(in srgb, var(--auth-dark-bg) 92%, transparent) 100%);
+  --auth-hero-badge-bg: color-mix(in srgb, var(--auth-accent-gold) 14%, transparent);
+  --auth-hero-badge-text: #fbbf24;
+  --auth-hero-heading-color: #ffffff;
+
+  --auth-footer-text: #94a3b8;
+  --auth-footer-link: #cbd5e1;
+
+  --auth-mobile-bg-overlay: linear-gradient(180deg, color-mix(in srgb, var(--auth-dark-bg) 88%, transparent) 0%, color-mix(in srgb, var(--auth-dark-bg) 96%, transparent) 100%);
+}

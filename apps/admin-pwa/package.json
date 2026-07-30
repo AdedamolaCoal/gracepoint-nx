@@ -1,0 +1,10 @@
+{
+  "name": "admin-pwa",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "start": "ng serve --port 3910",
+    "build": "ng build",
+    "test": "ng test"
+  }
+}

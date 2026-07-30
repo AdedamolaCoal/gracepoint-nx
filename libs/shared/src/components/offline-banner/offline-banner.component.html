@@ -1,0 +1,5 @@
+@if ((queue.pendingCount() ?? 0) > 0) {
+  <div class="offline-banner">
+    {{ queue.pendingCount() }} check-in{{ (queue.pendingCount() ?? 0) > 1 ? 's' : '' }} waiting to sync
+  </div>
+}

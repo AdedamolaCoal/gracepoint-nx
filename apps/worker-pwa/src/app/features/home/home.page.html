@@ -1,0 +1,41 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Gracepoint</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  @if (homeStore.isLoading()) {
+    <div class="centered-state">
+      <ion-spinner name="crescent"></ion-spinner>
+    </div>
+  } @else if (homeStore.currentService(); as service) {
+    <ion-card class="service-card">
+      <ion-card-content>
+        <p class="service-status">
+          {{ homeStore.hasOpenService() ? 'Happening now' : 'Coming up' }}
+        </p>
+        <h2>{{ service.name }}</h2>
+        <p>{{ service.serviceDate | date: 'EEEE, MMM d' }}</p>
+      </ion-card-content>
+    </ion-card>
+
+    @if (homeStore.hasOpenService()) {
+      <ion-button expand="block" size="large" (click)="goToScan()">
+        <ion-icon name="qr-code-outline" slot="start"></ion-icon>
+        Scan to Clock In
+      </ion-button>
+    }
+  } @else {
+    <div class="centered-state">
+      <p>No active service right now.</p>
+    </div>
+  }
+
+  @if (lastEntry(); as entry) {
+    <div class="last-checkin">
+      <span>Last check-in: {{ entry.serviceName }}</span>
+      <app-status-pill [status]="entry.status" />
+    </div>
+  }
+</ion-content>
