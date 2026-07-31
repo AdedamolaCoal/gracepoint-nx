@@ -1,41 +1,241 @@
-<ion-content class="ion-padding">
+<ion-content class="dashboard-content">
+  <!-- Dashboard Banner -->
   <div class="dashboard-banner">
-    <h1 class="dashboard-title">Dashboard Overview</h1>
-    <p class="dashboard-subtitle">Real-time attendance and worker activity summary.</p>
+    <div class="dashboard-banner__info">
+      <h1 class="dashboard-title">Dashboard Overview</h1>
+      <p class="dashboard-subtitle">Real-time summary of church workers, service events, and attendance activity.</p>
+    </div>
+    <div class="dashboard-banner__actions">
+      <ion-button color="primary" [routerLink]="'/app/services'">
+        <ion-icon name="calendar-outline" slot="start"></ion-icon>
+        Manage Events
+      </ion-button>
+      <ion-button fill="outline" color="primary" [routerLink]="'/app/workers'">
+        <ion-icon name="people-outline" slot="start"></ion-icon>
+        Workers Directory
+      </ion-button>
+    </div>
   </div>
 
   @if (store.isLoading()) {
     <div class="centered-state">
       <ion-spinner name="crescent" color="primary"></ion-spinner>
+      <span>Loading dashboard data...</span>
     </div>
-  } @else if (store.currentService(); as service) {
-    <ion-card class="service-card">
-      <ion-card-content>
-        <p class="service-status">{{ service.status === 'Open' ? 'Happening now' : 'Coming up' }}</p>
-        <h2>{{ service.name }}</h2>
-        <p>{{ service.serviceDate | date: 'EEEE, MMM d' }}</p>
-      </ion-card-content>
-    </ion-card>
+  } @else {
+    <!-- Top Summary Stat Cards Grid -->
+    <div class="dashboard-stats-grid">
+      <div class="stat-box">
+        <div class="stat-box__header">
+          <span class="stat-box__title">Total Workers</span>
+          <div class="stat-box__icon-box stat-box__icon-box--primary">
+            <ion-icon name="people-outline"></ion-icon>
+          </div>
+        </div>
+        <div class="stat-box__value">{{ store.totalWorkersCount() }}</div>
+        <div class="stat-box__footer">
+          <span class="stat-box__subtext">{{ store.activeWorkersCount() }} Approved & Active</span>
+        </div>
+      </div>
 
-    @if (store.attendanceSummary(); as summary) {
-      <div class="stat-grid">
-        <app-stat-card [value]="summary.presentCount" label="Present" color="success" />
-        <app-stat-card [value]="summary.lateCount" label="Late" color="warning" />
-        <app-stat-card [value]="summary.absentCount" label="Absent" color="danger" />
+      <div class="stat-box" [class.stat-box--highlight]="store.pendingWorkers().length > 0">
+        <div class="stat-box__header">
+          <span class="stat-box__title">Pending Approvals</span>
+          <div class="stat-box__icon-box stat-box__icon-box--warning">
+            <ion-icon name="time-outline"></ion-icon>
+          </div>
+        </div>
+        <div class="stat-box__value">{{ store.pendingWorkers().length }}</div>
+        <div class="stat-box__footer">
+          @if (store.pendingWorkers().length > 0) {
+            <ion-badge color="warning" class="stat-box__badge">Action Required</ion-badge>
+          } @else {
+            <span class="stat-box__subtext">All registrations approved</span>
+          }
+        </div>
+      </div>
+
+      <div class="stat-box">
+        <div class="stat-box__header">
+          <span class="stat-box__title">Service Events</span>
+          <div class="stat-box__icon-box stat-box__icon-box--info">
+            <ion-icon name="calendar-outline"></ion-icon>
+          </div>
+        </div>
+        <div class="stat-box__value">{{ store.totalServicesCount() }}</div>
+        <div class="stat-box__footer">
+          @if (store.currentService(); as current) {
+            <ion-chip color="success" class="stat-box__chip">
+              <ion-icon name="sparkles-outline"></ion-icon>
+              <span>LIVE: {{ current.name }}</span>
+            </ion-chip>
+          } @else {
+            <span class="stat-box__subtext">No event live now</span>
+          }
+        </div>
+      </div>
+
+      <div class="stat-box">
+        <div class="stat-box__header">
+          <span class="stat-box__title">Live Attendance</span>
+          <div class="stat-box__icon-box stat-box__icon-box--success">
+            <ion-icon name="checkmark-circle-outline"></ion-icon>
+          </div>
+        </div>
+        <div class="stat-box__value">
+          {{ store.attendanceSummary()?.presentCount ?? 0 }}
+        </div>
+        <div class="stat-box__footer">
+          <span class="stat-box__subtext">Present workers at active event</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Active Service & Attendance Breakdown -->
+    @if (store.currentService(); as service) {
+      <div class="dashboard-section">
+        <div class="section-header">
+          <h2 class="section-title">Active Service Event</h2>
+          <ion-chip color="success">
+            <ion-icon name="sparkles-outline"></ion-icon>
+            <ion-label>{{ service.status === 'Open' ? 'LIVE NOW' : 'SCHEDULED' }}</ion-label>
+          </ion-chip>
+        </div>
+
+        <div class="active-service-card">
+          <div class="active-service-card__info">
+            <h3 class="active-service-card__name">{{ service.name }}</h3>
+            <p class="active-service-card__date">
+              <ion-icon name="calendar-outline"></ion-icon>
+              {{ service.serviceDate | date: 'fullDate' }}
+            </p>
+          </div>
+
+          @if (store.attendanceSummary(); as summary) {
+            <div class="active-service-card__breakdown">
+              <app-stat-card [value]="summary.presentCount" label="Present" color="success" />
+              <app-stat-card [value]="summary.lateCount" label="Late" color="warning" />
+              <app-stat-card [value]="summary.absentCount" label="Absent" color="danger" />
+            </div>
+          }
+        </div>
       </div>
     }
-  } @else {
-    <div class="centered-state">
-      <p>No service scheduled right now.</p>
-    </div>
-  }
 
-  @if (store.pendingWorkers().length > 0) {
-    <ion-card class="pending-card" [routerLink]="'/app/workers'">
-      <ion-card-content class="pending-content">
-        <span>Pending worker approvals</span>
-        <ion-badge color="warning">{{ store.pendingWorkers().length }}</ion-badge>
-      </ion-card-content>
-    </ion-card>
+    <!-- Pending Worker Approvals Quick Section -->
+    @if (store.pendingWorkers().length > 0) {
+      <div class="dashboard-section">
+        <div class="section-header">
+          <div class="section-header__title-group">
+            <h2 class="section-title">Pending Worker Approvals</h2>
+            <ion-badge color="warning">{{ store.pendingWorkers().length }}</ion-badge>
+          </div>
+          <ion-button fill="clear" color="primary" [routerLink]="'/app/workers'">
+            <span>View All Pending</span>
+            <ion-icon name="arrow-forward-outline" slot="end"></ion-icon>
+          </ion-button>
+        </div>
+
+        <div class="pending-list">
+          @for (worker of store.pendingWorkers(); track worker.id) {
+            <div class="pending-item">
+              <div class="pending-item__avatar">
+                {{ worker.fullName.charAt(0).toUpperCase() }}
+              </div>
+              <div class="pending-item__details">
+                <span class="pending-item__name">{{ worker.fullName }}</span>
+                <span class="pending-item__phone">{{ worker.phoneNumber }}</span>
+              </div>
+              <ion-button
+                color="success"
+                size="small"
+                class="pending-item__approve-btn"
+                (click)="approve(worker.id, $event)"
+                [disabled]="store.isActionSubmitting()"
+              >
+                <ion-icon name="checkmark-circle-outline" slot="start"></ion-icon>
+                Approve
+              </ion-button>
+            </div>
+          }
+        </div>
+      </div>
+    }
+
+    <!-- Workers Directory Web Data Table -->
+    <div class="dashboard-section">
+      <div class="section-header">
+        <h2 class="section-title">Recent Workers Directory</h2>
+        <ion-button fill="clear" color="primary" [routerLink]="'/app/workers'">
+          <span>Full Workers Directory</span>
+          <ion-icon name="arrow-forward-outline" slot="end"></ion-icon>
+        </ion-button>
+      </div>
+
+      <div class="dashboard-table-container">
+        <table class="dashboard-table">
+          <thead>
+            <tr>
+              <th>Worker Name</th>
+              <th>Unit</th>
+              <th>Phone Number</th>
+              <th>Status</th>
+              <th class="table-align-right">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (worker of store.recentWorkers(); track worker.id) {
+              <tr>
+                <td>
+                  <div class="table-user">
+                    <div class="table-user__avatar">
+                      {{ worker.fullName.charAt(0).toUpperCase() }}
+                    </div>
+                    <span class="table-user__name">{{ worker.fullName }}</span>
+                  </div>
+                </td>
+                <td>
+                  <span class="table-text-sub">{{ worker.unitName || 'Unassigned' }}</span>
+                </td>
+                <td>
+                  <span class="table-text-muted">{{ worker.phoneNumber }}</span>
+                </td>
+                <td>
+                  @if (worker.isApproved) {
+                    <ion-badge color="success" class="table-badge">Approved</ion-badge>
+                  } @else {
+                    <ion-badge color="warning" class="table-badge">Pending Approval</ion-badge>
+                  }
+                </td>
+                <td class="table-align-right">
+                  @if (!worker.isApproved) {
+                    <ion-button
+                      color="success"
+                      size="small"
+                      fill="solid"
+                      class="table-action-btn"
+                      (click)="approve(worker.id, $event)"
+                      [disabled]="store.isActionSubmitting()"
+                    >
+                      Approve
+                    </ion-button>
+                  } @else {
+                    <ion-button
+                      color="primary"
+                      size="small"
+                      fill="outline"
+                      class="table-action-btn"
+                      [routerLink]="'/app/workers'"
+                    >
+                      Details
+                    </ion-button>
+                  }
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
   }
 </ion-content>

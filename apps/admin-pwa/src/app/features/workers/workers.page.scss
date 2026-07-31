@@ -28,7 +28,7 @@
 
 .workers-title {
   font-size: 2.2rem;
-  font-weight: 800;
+  font-weight: 700;
   color: var(--app-text-main, #0f172a);
   margin: 0;
   letter-spacing: -0.01em;
@@ -36,7 +36,7 @@
 
 .workers-badge {
   font-size: 1.1rem;
-  font-weight: 700;
+  font-weight: 600;
   padding: 0.4rem 0.8rem;
   border-radius: var(--app-radius-sm, 0.8rem);
 }
@@ -44,31 +44,39 @@
 .workers-add-btn {
   --border-radius: var(--app-radius-sm, 0.8rem);
   font-size: 1.3rem;
-  font-weight: 700;
+  font-weight: 600;
   margin: 0;
 }
+
 
 .workers-searchbar {
   --background: var(--app-surface-subtle, #f8fafc);
   --color: var(--app-text-main, #0f172a);
-  --placeholder-color: var(--app-text-muted, #94a3b8);
-  --icon-color: var(--app-text-muted, #94a3b8);
+  --placeholder-color: var(--app-text-sub, #64748b);
+  --placeholder-opacity: 1;
+  --icon-color: var(--app-text-sub, #64748b);
+  --icon-size: 2.2rem;
   --border-radius: var(--app-radius-sm, 0.8rem);
   --box-shadow: none;
-  --height: 4.2rem;
-  width: 34rem;
+  --height: 4.8rem;
+  width: 40rem;
   max-width: 100%;
-  border: 0.1rem solid var(--app-border, #e2e8f0);
-  font-size: 1.35rem;
+  border: 0.1rem solid var(--app-border, #cbd5e1);
+  border-radius: var(--app-radius-sm, 0.8rem);
+  font-size: 1.5rem;
+  font-weight: 500;
   padding: 0;
-  transition: border-color 150ms ease, background-color 150ms ease;
+  transition: all 150ms ease;
 
   &:hover,
   &.searchbar-has-focus {
-    border-color: var(--ion-color-primary, #8b1e24);
+    border-color: var(--ion-color-primary, #0f291e);
     --background: var(--app-bg-white, #ffffff);
+    box-shadow: none;
   }
 }
+
+
 
 .workers-segment {
   --background: var(--app-surface-subtle, #f8fafc);
@@ -80,7 +88,8 @@
 
   ion-segment-button {
     --color: var(--app-text-sub, #475569);
-    --color-checked: var(--ion-color-primary, #8b1e24);
+    --color-checked: var(--ion-color-primary, #0f291e);
+
     --background-checked: var(--app-bg-white, #ffffff);
     --indicator-color: transparent;
     --border-radius: 0.6rem;
@@ -273,7 +282,7 @@
 
   .modal-title {
     font-size: 1.6rem;
-    font-weight: 800;
+    font-weight: 700;
   }
 
   .modal-content {

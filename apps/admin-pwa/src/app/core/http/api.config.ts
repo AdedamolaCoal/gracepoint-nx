@@ -11,6 +11,8 @@ export const API = {
   serviceAttendance: (id: string) => `${API_BASE}/admin/reports/service/${id}`,
   serviceAttendanceExport: (id: string) =>
     `${API_BASE}/admin/reports/service/${id}/export`,
+  workerHistory: (workerId: string) =>
+    `${API_BASE}/admin/reports/worker/${workerId}`,
   pendingWorkers: `${API_BASE}/admin/workers/pending-approval`,
   workers: `${API_BASE}/admin/workers`,
   units: `${API_BASE}/units`,

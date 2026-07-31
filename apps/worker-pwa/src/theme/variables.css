@@ -1,11 +1,14 @@
 :root {
   /* Ionic Color Palette */
-  --ion-color-primary: #2c5f2d;
-  --ion-color-primary-rgb: 44, 95, 45;
+  --ion-font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+
+  --ion-color-primary: #0f291e;
+  --ion-color-primary-rgb: 15, 41, 30;
   --ion-color-primary-contrast: #ffffff;
   --ion-color-primary-contrast-rgb: 255, 255, 255;
-  --ion-color-primary-shade: #275329;
-  --ion-color-primary-tint: #416f43;
+  --ion-color-primary-shade: #0a1c15;
+  --ion-color-primary-tint: #1c4533;
+
 
   --ion-color-secondary: #3dc2ff;
   --ion-color-secondary-rgb: 61, 194, 255;

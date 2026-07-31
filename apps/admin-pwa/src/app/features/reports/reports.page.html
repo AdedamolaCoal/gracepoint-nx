@@ -1,6 +1,211 @@
-<ion-content class="ion-padding">
-  <div class="page-banner">
-    <h1 class="page-title">Attendance & Performance Reports</h1>
-    <p class="page-subtitle">Generate and inspect attendance statistics for services and workers.</p>
+<ion-content class="reports-content">
+  <!-- Page Header -->
+  <div class="reports-page-header">
+    <div class="reports-page-header__left">
+      <h1 class="reports-title">Attendance & Performance Reports</h1>
+      <p class="reports-subtitle">Inspect service event attendance metrics and individual worker history.</p>
+    </div>
+
+    <ion-segment
+      class="reports-segment"
+      [value]="activeTab()"
+      (ionChange)="activeTab.set($any($event.detail.value))"
+    >
+      <ion-segment-button value="service">
+        <span>By Service Event</span>
+      </ion-segment-button>
+      <ion-segment-button value="worker">
+        <span>By Worker</span>
+      </ion-segment-button>
+    </ion-segment>
   </div>
+
+  @if (activeTab() === 'service') {
+    <!-- Service Event Selector Cards -->
+    <div class="reports-section-label">
+      <span>Select a Service Event</span>
+    </div>
+
+    <div class="event-card-grid">
+      @for (service of store.allServices(); track service.id) {
+        <div
+          class="event-selector-card"
+          [class.event-selector-card--active]="store.selectedServiceId() === service.id"
+          (click)="onServiceSelected(service.id)"
+        >
+          <div class="event-selector-card__top">
+            <div class="event-selector-card__icon-box">
+              <ion-icon name="calendar-outline"></ion-icon>
+            </div>
+            @if (service.status === 'Open') {
+              <ion-badge color="success" class="event-selector-card__badge">LIVE NOW</ion-badge>
+            } @else {
+              <ion-badge color="light" class="event-selector-card__badge">Completed</ion-badge>
+            }
+          </div>
+          <h3 class="event-selector-card__title">{{ service.name }}</h3>
+          <span class="event-selector-card__date">{{ service.serviceDate | date: 'EEEE, MMM d, y' }}</span>
+        </div>
+      }
+    </div>
+
+    <!-- Attendance Breakdown Report -->
+    @if (store.isLoadingAttendance()) {
+      <div class="centered-state">
+        <ion-spinner name="crescent" color="primary"></ion-spinner>
+        <span>Loading attendance report...</span>
+      </div>
+    } @else if (store.serviceAttendance(); as summary) {
+      <div class="reports-report-header">
+        <div class="reports-report-header__title-group">
+          <h2 class="reports-report-title">{{ summary.serviceName }} Attendance Summary</h2>
+          <span class="reports-report-date">{{ summary.serviceDate | date: 'fullDate' }}</span>
+        </div>
+
+        <ion-button
+          color="primary"
+          fill="outline"
+          class="reports-export-btn"
+          (click)="exportCsv()"
+          [disabled]="isExporting()"
+        >
+          <ion-icon name="download-outline" slot="start"></ion-icon>
+          @if (isExporting()) {
+            <ion-spinner name="crescent"></ion-spinner>
+          } @else {
+            <span>Export CSV</span>
+          }
+        </ion-button>
+      </div>
+
+      <div class="stat-grid">
+        <app-stat-card [value]="summary.presentCount" label="Present" color="success" />
+        <app-stat-card [value]="summary.lateCount" label="Late" color="warning" />
+        <app-stat-card [value]="summary.absentCount" label="Absent" color="danger" />
+        <app-stat-card [value]="summary.flaggedCount" label="Flagged" color="medium" />
+      </div>
+
+      <div class="reports-table-container">
+        <table class="reports-table">
+          <thead>
+            <tr>
+              <th>Worker Name</th>
+              <th>Unit</th>
+              <th>Clock-in Time</th>
+              <th class="table-align-right">Attendance Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (record of summary.records; track record.workerId) {
+              <tr>
+                <td>
+                  <div class="table-user">
+                    <div class="table-user__avatar">
+                      {{ record.workerName.charAt(0).toUpperCase() }}
+                    </div>
+                    <span class="table-user__name">{{ record.workerName }}</span>
+                  </div>
+                </td>
+                <td>
+                  <span class="table-text-sub">{{ record.unitName || 'Unassigned' }}</span>
+                </td>
+                <td>
+                  <span class="table-text-muted">
+                    {{ record.clientClockInTime ? (record.clientClockInTime | date: 'h:mm a') : '—' }}
+                  </span>
+                </td>
+                <td class="table-align-right">
+                  <app-status-pill [status]="record.status" />
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    } @else {
+      <div class="reports-empty-state">
+        <ion-icon name="document-text-outline" class="reports-empty-icon"></ion-icon>
+        <p>Select a service event card above to inspect its attendance report.</p>
+      </div>
+    }
+  } @else {
+    <!-- Worker Search & Selector Cards -->
+    <div class="reports-section-label">
+      <span>Select a Worker</span>
+    </div>
+
+    <div class="reports-filter-row">
+      <ion-searchbar
+        class="reports-searchbar"
+        placeholder="Search worker by name or unit..."
+        [value]="workerSearchTerm()"
+        (ionInput)="workerSearchTerm.set($any($event.detail.value))"
+      ></ion-searchbar>
+    </div>
+
+    <div class="worker-card-grid">
+      @for (worker of filteredWorkers(); track worker.id) {
+        <div
+          class="worker-selector-card"
+          [class.worker-selector-card--active]="store.selectedWorkerId() === worker.id"
+          (click)="onWorkerSelected(worker.id)"
+        >
+          <div class="worker-selector-card__avatar">
+            {{ worker.fullName.charAt(0).toUpperCase() }}
+          </div>
+          <div class="worker-selector-card__info">
+            <h4 class="worker-selector-card__name">{{ worker.fullName }}</h4>
+            <span class="worker-selector-card__unit">{{ worker.unitName || 'Unassigned' }}</span>
+          </div>
+        </div>
+      }
+    </div>
+
+    <!-- Worker Attendance History Report -->
+    @if (store.isLoadingWorkerHistory()) {
+      <div class="centered-state">
+        <ion-spinner name="crescent" color="primary"></ion-spinner>
+        <span>Loading worker history...</span>
+      </div>
+    } @else if (store.workerHistory().length > 0) {
+      <div class="reports-report-header">
+        <div class="reports-report-header__title-group">
+          <h2 class="reports-report-title">{{ selectedWorkerName() }} Attendance History</h2>
+          <span class="reports-report-date">Total Records: {{ store.workerHistory().length }}</span>
+        </div>
+      </div>
+
+      <div class="reports-table-container">
+        <table class="reports-table">
+          <thead>
+            <tr>
+              <th>Service Event</th>
+              <th>Service Date</th>
+              <th class="table-align-right">Attendance Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (entry of store.workerHistory(); track entry.serviceEventId) {
+              <tr>
+                <td>
+                  <span class="table-user__name">{{ entry.serviceName }}</span>
+                </td>
+                <td>
+                  <span class="table-text-sub">{{ entry.serviceDate | date: 'EEEE, MMM d, y' }}</span>
+                </td>
+                <td class="table-align-right">
+                  <app-status-pill [status]="entry.status" />
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    } @else {
+      <div class="reports-empty-state">
+        <ion-icon name="person-outline" class="reports-empty-icon"></ion-icon>
+        <p>Select a worker card above to view their attendance history.</p>
+      </div>
+    }
+  }
 </ion-content>

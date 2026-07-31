@@ -3,11 +3,25 @@ import { DatePipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import {
   IonContent,
-  IonCard,
-  IonCardContent,
   IonSpinner,
   IonBadge,
+  IonButton,
+  IonIcon,
+  IonChip,
+  IonLabel,
 } from '@ionic/angular/standalone';
+import { addIcons } from 'ionicons';
+import {
+  peopleOutline,
+  checkmarkCircleOutline,
+  timeOutline,
+  sparklesOutline,
+  calendarOutline,
+  addOutline,
+  arrowForwardOutline,
+  personOutline,
+  callOutline,
+} from 'ionicons/icons';
 import { DashboardStore } from './dashboard.store';
 import { StatCardComponent } from '@gracepoint/shared';
 
@@ -18,10 +32,12 @@ import { StatCardComponent } from '@gracepoint/shared';
     DatePipe,
     RouterLink,
     IonContent,
-    IonCard,
-    IonCardContent,
     IonSpinner,
     IonBadge,
+    IonButton,
+    IonIcon,
+    IonChip,
+    IonLabel,
     StatCardComponent,
   ],
   templateUrl: './dashboard.page.html',
@@ -29,4 +45,23 @@ import { StatCardComponent } from '@gracepoint/shared';
 })
 export class DashboardPage {
   protected readonly store = inject(DashboardStore);
+
+  constructor() {
+    addIcons({
+      peopleOutline,
+      checkmarkCircleOutline,
+      timeOutline,
+      sparklesOutline,
+      calendarOutline,
+      addOutline,
+      arrowForwardOutline,
+      personOutline,
+      callOutline,
+    });
+  }
+
+  approve(workerId: string, event: Event): void {
+    event.stopPropagation();
+    this.store.approveWorker(workerId);
+  }
 }

@@ -40,7 +40,7 @@
     transition: border-color 150ms ease;
 
     &:hover {
-      border-color: var(--ion-color-primary, #8b1e24);
+      border-color: var(--ion-color-primary, #0f291e);
     }
   }
 
@@ -57,7 +57,7 @@
 
   &__title {
     font-size: 1.6rem;
-    font-weight: 800;
+    font-weight: 700;
     color: var(--app-text-main, #0f172a);
     margin: 0;
     line-height: 1.2;
@@ -66,7 +66,7 @@
 
   &__subtitle {
     font-size: 1.1rem;
-    font-weight: 600;
+    font-weight: 500;
     color: var(--app-text-muted, #94a3b8);
     margin-top: 0.2rem;
   }
@@ -79,7 +79,7 @@
 
   &__section-label {
     font-size: 1.05rem;
-    font-weight: 800;
+    font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.08em;
     color: var(--app-text-muted, #94a3b8);
@@ -105,7 +105,7 @@
     --min-height: 4.4rem;
     margin-bottom: 0.4rem;
     font-size: 1.35rem;
-    font-weight: 600;
+    font-weight: 500;
     box-shadow: none;
     transition: all 150ms ease;
 
@@ -120,7 +120,7 @@
       --color: var(--app-text-main, #0f172a);
 
       ion-icon {
-        color: var(--ion-color-primary, #8b1e24);
+        color: var(--ion-color-primary, #0f291e);
       }
     }
   }
@@ -128,17 +128,17 @@
 
 /* Active Nav Item Selector */
 .active-nav-item {
-  --background: color-mix(in srgb, var(--ion-color-primary, #8b1e24) 8%, #ffffff);
-  --color: var(--ion-color-primary, #8b1e24);
-  --color-hover: var(--ion-color-primary, #8b1e24);
-  --color-focused: var(--ion-color-primary, #8b1e24);
-  --color-activated: var(--ion-color-primary, #8b1e24);
-  font-weight: 800;
+  --background: color-mix(in srgb, var(--ion-color-primary, #0f291e) 8%, #ffffff);
+  --color: var(--ion-color-primary, #0f291e);
+  --color-hover: var(--ion-color-primary, #0f291e);
+  --color-focused: var(--ion-color-primary, #0f291e);
+  --color-activated: var(--ion-color-primary, #0f291e);
+  font-weight: 700;
   box-shadow: none;
-  border-left: 0.3rem solid var(--ion-color-primary, #8b1e24);
+  border-left: 0.3rem solid var(--ion-color-primary, #0f291e);
 
   ion-icon {
-    color: var(--ion-color-primary, #8b1e24) !important;
+    color: var(--ion-color-primary, #0f291e) !important;
   }
 }
 
@@ -187,7 +187,7 @@
 
   &__portal-title {
     font-size: 1.6rem;
-    font-weight: 800;
+    font-weight: 700;
     color: var(--app-text-main, #0f172a);
     letter-spacing: -0.01em;
   }
@@ -212,10 +212,10 @@
     width: 3.2rem;
     height: 3.2rem;
     border-radius: 50%;
-    background: var(--ion-color-primary, #8b1e24);
+    background: var(--ion-color-primary, #0f291e);
     color: var(--ion-color-primary-contrast, #ffffff);
     font-size: 1.3rem;
-    font-weight: 800;
+    font-weight: 700;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -230,20 +230,22 @@
 
   &__user-name {
     font-size: 1.35rem;
-    font-weight: 700;
+    font-weight: 600;
     color: var(--app-text-main, #0f172a);
   }
 
   &__role-pill {
     font-size: 1rem;
-    font-weight: 800;
-    color: var(--ion-color-primary, #8b1e24);
-    background: color-mix(in srgb, var(--ion-color-primary, #8b1e24) 10%, transparent);
+    font-weight: 600;
+    color: var(--ion-color-primary, #0f291e);
+    background: color-mix(in srgb, var(--ion-color-primary, #0f291e) 10%, transparent);
     padding: 0.2rem 0.6rem;
     border-radius: 0.4rem;
     text-transform: uppercase;
     letter-spacing: 0.04em;
   }
+
+
 
   &__logout-btn {
     display: inline-flex;
