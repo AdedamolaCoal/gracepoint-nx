@@ -1,12 +1,178 @@
-.centered-state {
+.page-toolbar {
+  --background: var(--auth-dark-bg, #0c100d);
+  --color: var(--auth-text-title, #ffffff);
+  --border-color: var(--app-card-border, rgba(255, 255, 255, 0.08));
+  padding: 0 1.6rem;
+}
+
+.profile-content {
+  --background: var(--auth-dark-bg, #0c100d);
+  color: var(--auth-text-title, #ffffff);
+  --padding-start: 1.6rem;
+  --padding-end: 1.6rem;
+  --padding-top: 1.6rem;
+  --padding-bottom: 3.2rem;
+}
+
+.profile-container {
   display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  max-width: 60rem;
+  margin: 0 auto;
+}
+
+.profile-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  padding: 2.4rem 1.6rem;
+  background: var(--welcome-banner-bg);
+  border: 1px solid var(--welcome-banner-border);
+  border-radius: var(--app-radius, 1.4rem);
+  text-align: center;
+}
+
+.profile-avatar {
+  width: 6.4rem;
+  height: 6.4rem;
+  border-radius: 50%;
+  background: var(--app-icon-bg-emerald);
+  color: var(--auth-accent-emerald, #34d399);
+  display: flex;
+  align-items: center;
   justify-content: center;
-  padding: var(--app-spacing-lg) 0;
+  font-size: 2.8rem;
+  font-weight: 700;
+  border: 2px solid var(--auth-accent-emerald, #34d399);
+}
+
+.profile-name {
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: var(--auth-text-title, #ffffff);
+  margin: 0;
+}
+
+.profile-unit {
+  font-size: 1.4rem;
+  color: var(--auth-accent-emerald, #34d399);
+  margin: 0;
+  font-weight: 600;
+}
+
+.info-section {
+  display: flex;
+  flex-direction: column;
+  background: var(--app-card-bg, #141c16);
+  border: 1px solid var(--app-card-border);
+  border-radius: var(--app-radius, 1.4rem);
+  overflow: hidden;
+}
+
+.info-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.6rem;
+  border-bottom: 1px solid var(--app-card-border);
+}
+
+.info-row:last-child {
+  border-bottom: none;
+}
+
+.info-label {
+  font-size: 1.35rem;
+  color: var(--auth-text-subtitle, #94a3b8);
+}
+
+.info-value {
+  font-size: 1.45rem;
+  font-weight: 600;
+  color: var(--auth-text-title, #ffffff);
+}
+
+.action-btn {
+  --border-color: var(--app-icon-border-emerald);
+  --color: var(--auth-accent-emerald, #34d399);
+  --border-radius: var(--auth-btn-radius, 0.8rem);
+  font-size: 1.4rem;
+  font-weight: 600;
 }
 
 .pin-form {
   display: flex;
   flex-direction: column;
-  gap: var(--app-spacing-sm);
-  margin: var(--app-spacing-md) 0;
+  gap: 1.4rem;
+  padding: 1.8rem;
+  background: var(--app-card-bg, #141c16);
+  border: 1px solid var(--app-card-border);
+  border-radius: var(--app-radius, 1.4rem);
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.form-label {
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: var(--auth-text-label, #e2e8f0);
+}
+
+.form-input {
+  --background: var(--auth-dark-bg, #0c100d);
+  --color: var(--auth-text-title, #ffffff);
+  --placeholder-color: var(--auth-text-muted, #64748b);
+  --padding-start: 1.2rem;
+  --padding-end: 1.2rem;
+  --border-radius: var(--auth-input-radius, 0.8rem);
+  border: 1px solid var(--auth-input-border);
+  border-radius: var(--auth-input-radius, 0.8rem);
+  background: var(--auth-dark-bg, #0c100d);
+}
+
+.message-box {
+  padding: 1rem 1.4rem;
+  border-radius: var(--auth-input-radius, 0.8rem);
+  background: var(--app-icon-bg-emerald);
+  border: 1px solid var(--app-icon-border-emerald);
+  color: var(--auth-accent-emerald, #34d399);
+  font-size: 1.3rem;
+}
+
+.message-box.error {
+  background: var(--badge-error-bg);
+  border-color: var(--badge-error-border);
+  color: var(--badge-error-color);
+}
+
+.message-box p {
+  margin: 0;
+}
+
+.submit-pin-btn {
+  --background: var(--auth-primary-color, #16a34a);
+  --color: var(--auth-primary-contrast, #ffffff);
+  --border-radius: var(--auth-btn-radius, 0.8rem);
+  font-weight: 600;
+}
+
+.logout-btn {
+  font-size: 1.4rem;
+  font-weight: 600;
+  margin-top: 1rem;
+}
+
+.centered-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 1.6rem;
+  color: var(--auth-text-subtitle, #94a3b8);
 }

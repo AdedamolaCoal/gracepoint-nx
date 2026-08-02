@@ -15,5 +15,13 @@ export const API = {
     `${API_BASE}/admin/reports/worker/${workerId}`,
   pendingWorkers: `${API_BASE}/admin/workers/pending-approval`,
   workers: `${API_BASE}/admin/workers`,
+  workersImport: `${API_BASE}/admin/workers/import`,
+  workersImportTemplate: `${API_BASE}/admin/workers/import/template`,
   units: `${API_BASE}/units`,
+  unitsCreate: `${API_BASE}/admin/units`,
+  registrationInviteGenerate: `${API_BASE}/admin/registration-invites/generate`,
+  registrationInviteRevoke: `${API_BASE}/admin/registration-invites/revoke`,
+  registrationInviteActive: `${API_BASE}/admin/registration-invites/active`,
+  adminUsers: `${API_BASE}/admin/admin-users`,
+  changeOwnPassword: `${API_BASE}/admin/admin-users/me/change-password`,
 } as const;

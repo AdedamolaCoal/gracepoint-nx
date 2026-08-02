@@ -220,22 +220,46 @@
       padding: var(--app-spacing-xl, 2.8rem) var(--app-spacing-lg, 2rem);
       background: var(--auth-mobile-bg-overlay, linear-gradient(180deg, rgba(12, 16, 13, 0.88) 0%, rgba(8, 11, 9, 0.96) 100%)),
                   url('/auth/hero.webp') center/cover no-repeat;
+      justify-content: flex-start;
     }
 
     &__mobile-scripture-section {
       display: flex;
       flex-direction: column;
       align-items: center;
+      justify-content: center;
       text-align: center;
       width: 100%;
       max-width: 42rem;
-      margin: 0 auto var(--app-spacing-xl, 2.8rem) auto;
+      min-height: 15rem;
+      margin: 0 auto var(--app-spacing-lg, 2rem) auto;
       padding: 1.6rem;
       background: rgba(15, 23, 17, 0.65);
       backdrop-filter: blur(12px);
       -webkit-backdrop-filter: blur(12px);
       border-radius: 1.6rem;
       border: 1px solid rgba(255, 255, 255, 0.1);
+      box-sizing: border-box;
+      position: relative;
+      overflow: hidden;
+
+      .auth-layout__scripture {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .auth-layout__scripture-text {
+        font-size: 1.6rem;
+        line-height: 1.4;
+        margin: 0 0 0.6rem 0;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+      }
     }
 
     &__form-container {

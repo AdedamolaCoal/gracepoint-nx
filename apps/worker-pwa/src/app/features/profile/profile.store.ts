@@ -2,24 +2,29 @@ import { Injectable, computed, inject } from '@angular/core';
 import { ProfileService } from './profile.service';
 import { AuthState } from '@core/auth/auth.state';
 import { rxResource } from '@angular/core/rxjs-interop';
-import { of } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ProfileStore {
-  private readonly _service = inject(ProfileService);
-  private readonly _authState = inject(AuthState);
+  private readonly profileService = inject(ProfileService);
+  private readonly authState = inject(AuthState);
 
-  profileResource = rxResource({
-    params: () => this._authState.currentWorker()?.id,
-    stream: ({ params: workerId }) => {
-      if (!workerId) return of(null);
-
-      return this._service.getWorkerProfile();
-    },
+  readonly profileResource = rxResource({
+    params: () => this.authState.currentWorker()?.id,
+    stream: () => this.profileService.getWorkerProfile(),
   });
 
-  readonly profile = computed(() => this.profileResource.value());
-  readonly isLoading = computed(() => this.profileResource.isLoading());
+  readonly profile = computed(() => {
+    // Return API value if available, otherwise read directly from localStorage via StorageService
+    return this.profileResource.value() ?? this.profileService.getWorkerProfileFromStorage();
+  });
+
+  readonly isLoading = computed(() => {
+    // If we have cached storage data, we don't block the UI with a full-screen spinner
+    if (this.profileService.getWorkerProfileFromStorage() !== null) {
+      return false;
+    }
+    return this.profileResource.isLoading();
+  });
 }

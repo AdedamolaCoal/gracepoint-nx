@@ -6,11 +6,24 @@
   box-sizing: border-box;
 }
 
-/* 1rem = 10px (62.5% of 16px default browser font size) */
+/* Base 1rem = 10px (62.5% of 16px default browser font size) */
 html {
   font-size: 62.5%;
   -webkit-text-size-adjust: 100%;
   -webkit-tap-highlight-color: transparent;
+}
+
+/* Responsive Root Font Size for Mobile Viewports (e.g. iPhone XR / 375px - 430px) */
+@media (max-width: 480px) {
+  html {
+    font-size: 55%; /* 1rem = 8.8px for balanced mobile proportions */
+  }
+}
+
+@media (max-width: 360px) {
+  html {
+    font-size: 50%; /* 1rem = 8px for smaller mobile screens */
+  }
 }
 
 body {
@@ -20,6 +33,8 @@ body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background-color: var(--auth-dark-bg, #0c100d);
+  color: #ffffff;
 }
 
 /* Safe areas for mobile device notched displays */
@@ -28,4 +43,39 @@ body {
   --ion-safe-area-bottom: env(safe-area-inset-bottom, 0px);
   --ion-safe-area-left: env(safe-area-inset-left, 0px);
   --ion-safe-area-right: env(safe-area-inset-right, 0px);
+  --ion-background-color: #0c100d;
+  --ion-text-color: #ffffff;
+}
+
+/* Global Header & Toolbar Theme Overrides for Worker PWA */
+ion-header {
+  background: var(--auth-dark-bg, #0c100d) !important;
+
+  ion-toolbar {
+    --background: var(--auth-dark-bg, #0c100d) !important;
+    --color: #ffffff !important;
+    --border-color: rgba(255, 255, 255, 0.08);
+    --min-height: 5.2rem;
+    color: #ffffff !important;
+
+    ion-title {
+      font-size: 1.7rem;
+      font-weight: 700;
+      color: #ffffff !important;
+    }
+
+    ion-buttons,
+    ion-back-button {
+      --color: var(--auth-accent-emerald, #34d399) !important;
+      color: var(--auth-accent-emerald, #34d399) !important;
+    }
+  }
+}
+
+/* Tab Bar Styling */
+ion-tab-bar {
+  --background: #141c16 !important;
+  --border-color: rgba(255, 255, 255, 0.08) !important;
+  --color: #94a3b8 !important;
+  --color-selected: var(--auth-accent-emerald, #34d399) !important;
 }

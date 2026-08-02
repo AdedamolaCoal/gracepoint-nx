@@ -8,6 +8,7 @@ export interface ServiceEventSummary {
   serviceDate: string;
   clockInWindowStart: string;
   clockInWindowEnd: string;
+  lateAfter?: string;
   qrToken?: string;
   status: 'Scheduled' | 'Open' | 'Closed';
 }

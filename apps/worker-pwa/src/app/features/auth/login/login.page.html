@@ -4,7 +4,7 @@
       Welcome to <span class="auth-form__title-highlight">Gracepoint</span>
     </h1>
     <p class="auth-form__subtitle">
-      Please enter your credentials to login into your account
+      Please enter your phone number to sign in. New workers leave PIN empty for initial setup.
     </p>
   </div>
 
@@ -24,12 +24,12 @@
 
     <div class="auth-form__field">
       <label class="auth-form__label">
-        PIN<span class="auth-form__required">*</span>
+        PIN <span class="auth-form__hint">(Leave blank for first-time login)</span>
       </label>
       <ion-input
         class="auth-form__input"
         [type]="showPassword() ? 'text' : 'password'"
-        placeholder="••••••••"
+        placeholder="••••"
         [value]="pin()"
         (ionInput)="pin.set($any($event.detail.value))"
       >
@@ -76,8 +76,8 @@
     </ion-button>
 
     <div class="auth-form__footer-text">
-      <span>Don't have a Profile?</span>
-      <a class="auth-form__link" (click)="$event.preventDefault()">Create now</a>
+      <span>Not registered yet or have an invite code?</span>
+      <a [routerLink]="['/auth/register']" class="auth-form__link">Register here</a>
     </div>
   </form>
 </div>

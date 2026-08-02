@@ -8,7 +8,6 @@ import {
   IonButtons,
   IonButton,
   IonIcon,
-
   IonContent,
   IonGrid,
   IonRow,
@@ -41,13 +40,16 @@ import {
   alertCircleOutline,
   sparklesOutline,
   navigateOutline,
+  createOutline,
+  trashOutline,
 } from 'ionicons/icons';
 import { ServicesStore } from './services.store';
-import { QrCodeBrandedComponent } from '@gracepoint/shared';
+import { QrCodeBrandedComponent, PaginationComponent } from '@gracepoint/shared';
 
 import { ServiceEventService } from '@core/services/service-event.service';
 import { ServiceEventSummary } from '@core/models/service-event.model';
 import { environment } from '@env/environment';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-services',
@@ -61,7 +63,6 @@ import { environment } from '@env/environment';
     IonButtons,
     IonButton,
     IonIcon,
-
     IonContent,
     IonGrid,
     IonRow,
@@ -82,6 +83,7 @@ import { environment } from '@env/environment';
     IonNote,
     IonLabel,
     QrCodeBrandedComponent,
+    PaginationComponent,
   ],
   templateUrl: './services.page.html',
   styleUrl: './services.page.scss',
@@ -90,13 +92,14 @@ export class ServicesPage {
   protected readonly store = inject(ServicesStore);
   private readonly serviceEventService = inject(ServiceEventService);
 
-  // Create form state
+  // Form state for Create / Edit
   readonly showCreateModal = signal(false);
+  readonly editingEventId = signal<string | null>(null);
   readonly name = signal('Sunday Service');
   readonly serviceDate = signal(new Date().toISOString());
   readonly scheduledStart = signal('08:00');
   readonly scheduledEnd = signal('12:00');
-  readonly lateAfterMinutes = signal(20);
+  readonly lateAfterMinutes = signal(30);
   readonly churchLat = signal(0);
   readonly churchLng = signal(0);
   readonly geoRadiusMeters = signal(150);
@@ -122,11 +125,48 @@ export class ServicesPage {
       alertCircleOutline,
       sparklesOutline,
       navigateOutline,
+      createOutline,
+      trashOutline,
     });
   }
 
   openCreateModal(): void {
     this.formError.set(null);
+    this.editingEventId.set(null);
+    this.name.set('Sunday Service');
+    this.serviceDate.set(new Date().toISOString());
+    this.scheduledStart.set('08:00');
+    this.scheduledEnd.set('12:00');
+    this.lateAfterMinutes.set(30);
+    this.geoRadiusMeters.set(150);
+    this.showCreateModal.set(true);
+  }
+
+  openEditModal(service: any): void {
+    this.formError.set(null);
+    this.editingEventId.set(service.id);
+    this.name.set(service.name || '');
+    this.serviceDate.set(service.serviceDate || new Date().toISOString());
+
+    // Format start/end time if available
+    const startTimeStr = service.clockInWindowStart
+      ? service.clockInWindowStart.includes('T')
+        ? service.clockInWindowStart.split('T')[1].substring(0, 5)
+        : service.clockInWindowStart.substring(0, 5)
+      : '08:00';
+    const endTimeStr = service.clockInWindowEnd
+      ? service.clockInWindowEnd.includes('T')
+        ? service.clockInWindowEnd.split('T')[1].substring(0, 5)
+        : service.clockInWindowEnd.substring(0, 5)
+      : '12:00';
+
+    this.scheduledStart.set(startTimeStr);
+    this.scheduledEnd.set(endTimeStr);
+    this.lateAfterMinutes.set(service.lateAfterMinutes || 30);
+    this.churchLat.set(service.churchLat || 0);
+    this.churchLng.set(service.churchLng || 0);
+    this.geoRadiusMeters.set(service.geoRadiusMeters || 150);
+
     this.showCreateModal.set(true);
   }
 
@@ -144,37 +184,55 @@ export class ServicesPage {
     }
   }
 
-  submitCreate(): void {
-    if (!this.name() || this.churchLat() === 0) {
-      this.formError.set('Name and church location are required.');
+  submitCreateOrEdit(): void {
+    if (!this.name()) {
+      this.formError.set('Name is required.');
       return;
     }
 
     this.isSubmitting.set(true);
     this.formError.set(null);
 
-    this.serviceEventService
-      .create({
-        name: this.name(),
-        serviceDate: this.serviceDate().split('T')[0],
-        scheduledStart: `${this.scheduledStart()}:00`,
-        scheduledEnd: `${this.scheduledEnd()}:00`,
-        lateAfterMinutes: this.lateAfterMinutes(),
-        churchLat: this.churchLat(),
-        churchLng: this.churchLng(),
-        geoRadiusMeters: this.geoRadiusMeters(),
-      })
-      .subscribe({
-        next: () => {
-          this.isSubmitting.set(false);
-          this.showCreateModal.set(false);
-          this.store.refresh();
-        },
-        error: (err) => {
-          this.isSubmitting.set(false);
-          this.formError.set(err.error?.message ?? 'Could not create service.');
-        },
+    const payload = {
+      name: this.name(),
+      serviceDate: this.serviceDate().split('T')[0],
+      scheduledStart: this.scheduledStart().includes(':')
+        ? this.scheduledStart().length === 5 ? `${this.scheduledStart()}:00` : this.scheduledStart()
+        : `${this.scheduledStart()}:00:00`,
+      scheduledEnd: this.scheduledEnd().includes(':')
+        ? this.scheduledEnd().length === 5 ? `${this.scheduledEnd()}:00` : this.scheduledEnd()
+        : `${this.scheduledEnd()}:00:00`,
+      lateAfterMinutes: this.lateAfterMinutes(),
+      churchLat: this.churchLat(),
+      churchLng: this.churchLng(),
+      geoRadiusMeters: this.geoRadiusMeters(),
+    };
+
+    const eventId = this.editingEventId();
+    const action$: Observable<any> = eventId
+      ? this.serviceEventService.update(eventId, payload)
+      : this.serviceEventService.create(payload);
+
+    action$.subscribe({
+      next: () => {
+        this.isSubmitting.set(false);
+        this.showCreateModal.set(false);
+        this.store.refresh();
+      },
+      error: (err: any) => {
+        this.isSubmitting.set(false);
+        this.formError.set(err?.error?.message ?? 'Could not save service event.');
+      },
+    });
+  }
+
+  deleteService(service: ServiceEventSummary): void {
+    if (confirm(`Are you sure you want to delete "${service.name}"? This action will also delete all attendance records for this event.`)) {
+      this.serviceEventService.delete(service.id).subscribe({
+        next: () => this.store.refresh(),
+        error: (err: any) => alert(err?.error?.message ?? 'Could not delete service event.'),
       });
+    }
   }
 
   closeService(service: ServiceEventSummary): void {

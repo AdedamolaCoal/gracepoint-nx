@@ -1,6 +1,68 @@
-<ion-content class="ion-padding">
-  <div class="page-banner">
-    <h1 class="page-title">Admin & System Settings</h1>
-    <p class="page-subtitle">Configure application settings, worker units, and access permissions.</p>
+<ion-content class="settings-content">
+  <!-- Page Header -->
+  <div class="settings-page-header">
+    <div class="settings-page-header__left">
+      <h1 class="settings-title">Account & Security Settings</h1>
+      <p class="settings-subtitle">Update your personal account credentials and security preferences.</p>
+    </div>
+  </div>
+
+  <!-- Password Change Card -->
+  <div class="settings-card settings-card--narrow">
+    <div class="settings-card__header">
+      <div class="settings-card__icon-box">
+        <ion-icon name="lock-closed-outline"></ion-icon>
+      </div>
+      <div>
+        <h2 class="settings-card__title">Change Account Password</h2>
+        <p class="settings-card__subtitle">Update your login password for secure portal access.</p>
+      </div>
+    </div>
+
+    <div class="settings-card__body">
+      <div class="settings-form-column">
+        <ion-input
+          class="settings-input"
+          label="Current Password"
+          labelPlacement="floating"
+          fill="outline"
+          type="password"
+          [value]="currentPassword()"
+          (ionInput)="currentPassword.set($any($event.detail.value))"
+        ></ion-input>
+
+        <ion-input
+          class="settings-input"
+          label="New Password"
+          labelPlacement="floating"
+          fill="outline"
+          type="password"
+          [value]="newPassword()"
+          (ionInput)="newPassword.set($any($event.detail.value))"
+        ></ion-input>
+      </div>
+
+      @if (passwordMessage(); as msg) {
+        <div [class.form-alert-error]="passwordError()" [class.form-alert-success]="!passwordError()">
+          {{ msg }}
+        </div>
+      }
+
+      <div class="settings-form-actions">
+        <ion-button
+          color="primary"
+          class="settings-submit-btn"
+          (click)="submitPasswordChange()"
+          [disabled]="isChangingPassword()"
+        >
+          <ion-icon name="key-outline" slot="start"></ion-icon>
+          @if (isChangingPassword()) {
+            <ion-spinner name="crescent"></ion-spinner>
+          } @else {
+            <span>Update Password</span>
+          }
+        </ion-button>
+      </div>
+    </div>
   </div>
 </ion-content>

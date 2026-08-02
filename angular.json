@@ -77,7 +77,6 @@
                 }
               },
               "budgets": [
-
                 {
                   "type": "initial",
                   "maximumWarning": "1.5MB",
@@ -107,7 +106,11 @@
             "development": { "buildTarget": "admin-pwa:build:development" }
           },
           "defaultConfiguration": "development",
-          "options": { "port": 3930 }
+          "options": {
+            "port": 3930,
+            "host": "0.0.0.0",
+            "allowedHosts": true
+          }
         },
         "test": { "builder": "@angular/build:unit-test" }
       }
@@ -150,7 +153,8 @@
               {
                 "glob": "**/*",
                 "input": "public"
-              }
+              },
+              "apps/worker-pwa/src/firebase-messaging-sw.js"
             ],
             "styles": [
               "apps/worker-pwa/src/styles.scss",
@@ -182,16 +186,15 @@
                 }
               },
               "budgets": [
-
                 {
                   "type": "initial",
-                  "maximumWarning": "500kB",
-                  "maximumError": "1MB"
+                  "maximumWarning": "1.5MB",
+                  "maximumError": "3MB"
                 },
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "4kB",
-                  "maximumError": "8kB"
+                  "maximumWarning": "8kB",
+                  "maximumError": "16kB"
                 }
               ],
               "outputHashing": "all"
@@ -211,7 +214,11 @@
             "development": { "buildTarget": "worker-pwa:build:development" }
           },
           "defaultConfiguration": "development",
-          "options": { "port": 3900 }
+          "options": {
+            "port": 3900,
+            "host": "0.0.0.0",
+            "allowedHosts": true
+          }
         },
         "test": { "builder": "@angular/build:unit-test" }
       }

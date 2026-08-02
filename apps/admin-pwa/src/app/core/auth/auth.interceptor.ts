@@ -9,9 +9,15 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const authService = inject(AuthService);
 
   const token = authState.accessToken();
-  const authedReq = token
-    ? req.clone({ setHeaders: { Authorization: `Bearer ${token}` } })
-    : req;
+  const headers: Record<string, string> = {
+    'ngrok-skip-browser-warning': 'true',
+  };
+
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
+  }
+
+  const authedReq = req.clone({ setHeaders: headers });
 
   return next(authedReq).pipe(
     catchError((error: HttpErrorResponse) => {
@@ -32,7 +38,12 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
             return throwError(() => new Error('Refresh failed'));
           }
           authState.updateAccessToken(result.data.token, result.data.refreshToken);
-          const retriedReq = req.clone({ setHeaders: { Authorization: `Bearer ${result.data.token}` } });
+          const retriedReq = req.clone({
+            setHeaders: {
+              Authorization: `Bearer ${result.data.token}`,
+              'ngrok-skip-browser-warning': 'true',
+            },
+          });
           return next(retriedReq);
         }),
         catchError((refreshError) => {

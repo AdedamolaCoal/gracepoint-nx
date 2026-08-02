@@ -18,7 +18,7 @@ export class AuthLayoutComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.timerId = setInterval(() => {
       this.store.nextScripture();
-    }, 6000);
+    }, 10000);
   }
 
   ngOnDestroy(): void {

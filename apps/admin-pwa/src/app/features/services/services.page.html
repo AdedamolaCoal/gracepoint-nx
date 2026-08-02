@@ -71,6 +71,17 @@
                 </div>
 
                 <div class="service-card__actions">
+                  <ion-button
+                    class="service-card__btn"
+                    fill="outline"
+                    color="primary"
+                    size="small"
+                    (click)="openEditModal(service)"
+                  >
+                    <ion-icon name="create-outline" slot="start"></ion-icon>
+                    Edit
+                  </ion-button>
+
                   @if (service.qrToken) {
                     <ion-button
                       class="service-card__btn"
@@ -80,7 +91,7 @@
                       (click)="showQr(service)"
                     >
                       <ion-icon name="qr-code-outline" slot="start"></ion-icon>
-                      View QR Code
+                      QR Code
                     </ion-button>
                   }
 
@@ -88,14 +99,25 @@
                     <ion-button
                       class="service-card__btn"
                       fill="outline"
-                      color="danger"
+                      color="warning"
                       size="small"
                       (click)="closeService(service)"
                     >
                       <ion-icon name="close-circle-outline" slot="start"></ion-icon>
-                      Close Event
+                      Close
                     </ion-button>
                   }
+
+                  <ion-button
+                    class="service-card__btn"
+                    fill="clear"
+                    color="danger"
+                    size="small"
+                    (click)="deleteService(service)"
+                    title="Delete Event"
+                  >
+                    <ion-icon name="trash-outline" slot="icon-only"></ion-icon>
+                  </ion-button>
                 </div>
               </ion-card-content>
             </ion-card>
@@ -103,10 +125,20 @@
         }
       </ion-row>
     </ion-grid>
+
+    <app-pagination
+      [page]="store.page()"
+      [pageSize]="store.pageSize()"
+      [totalCount]="store.totalCount()"
+      [totalPages]="store.totalPages()"
+      [hasNextPage]="store.hasNextPage()"
+      [hasPreviousPage]="store.hasPreviousPage()"
+      (pageChange)="store.setPage($event)"
+    ></app-pagination>
   }
 </ion-content>
 
-<!-- Create Service Modal -->
+<!-- Create / Edit Service Modal -->
 <ion-modal
   class="services-modal"
   [isOpen]="showCreateModal()"
@@ -115,7 +147,7 @@
   <ng-template>
     <ion-header class="modal-header">
       <ion-toolbar class="modal-toolbar">
-        <ion-title class="modal-title">New Service Event</ion-title>
+        <ion-title class="modal-title">{{ editingEventId() ? 'Edit Service Event' : 'New Service Event' }}</ion-title>
         <ion-buttons slot="end">
           <ion-button color="medium" (click)="showCreateModal.set(false)">Close</ion-button>
         </ion-buttons>
@@ -174,7 +206,7 @@
         <div class="modal-row">
           <ion-input
             class="modal-input"
-            label="Latitude *"
+            label="Latitude"
             labelPlacement="floating"
             fill="outline"
             type="number"
@@ -184,7 +216,7 @@
 
           <ion-input
             class="modal-input"
-            label="Longitude *"
+            label="Longitude"
             labelPlacement="floating"
             fill="outline"
             type="number"
@@ -225,14 +257,14 @@
           class="modal-submit-btn"
           expand="block"
           color="primary"
-          (click)="submitCreate()"
+          (click)="submitCreateOrEdit()"
           [disabled]="isSubmitting()"
         >
           @if (isSubmitting()) {
             <ion-spinner name="crescent"></ion-spinner>
-            <span>Creating Event...</span>
+            <span>Saving Event...</span>
           } @else {
-            <span>Create Event</span>
+            <span>{{ editingEventId() ? 'Update Event' : 'Create Event' }}</span>
           }
         </ion-button>
       </div>

@@ -1,41 +1,148 @@
-<ion-header>
-  <ion-toolbar>
-    <ion-title>Gracepoint</ion-title>
+<ion-header class="ion-no-border">
+  <ion-toolbar class="home-toolbar">
+    <div class="toolbar-brand">
+      <img src="general/gpicc.jpg" alt="Gracepoint Logo" class="brand-logo" />
+      <!-- <span class="brand-title">Gracepoint</span> -->
+    </div>
   </ion-toolbar>
 </ion-header>
 
-<ion-content class="ion-padding">
-  @if (homeStore.isLoading()) {
-    <div class="centered-state">
-      <ion-spinner name="crescent"></ion-spinner>
+<ion-content class="home-content">
+  <div class="home-container">
+    <!-- Welcome Header Banner -->
+    <div class="welcome-banner">
+      <div class="welcome-badge">
+        <ion-icon name="sparkles-outline"></ion-icon>
+        Worker Portal
+      </div>
+      <h1 class="welcome-title">
+        Hello, <span class="welcome-highlight">{{ workerName() }}</span>!
+      </h1>
+      <p class="welcome-subtitle">
+        Explore upcoming service events and check in when you arrive.
+      </p>
     </div>
-  } @else if (homeStore.currentService(); as service) {
-    <ion-card class="service-card">
-      <ion-card-content>
-        <p class="service-status">
-          {{ homeStore.hasOpenService() ? 'Happening now' : 'Coming up' }}
-        </p>
-        <h2>{{ service.name }}</h2>
-        <p>{{ service.serviceDate | date: 'EEEE, MMM d' }}</p>
-      </ion-card-content>
-    </ion-card>
 
-    @if (homeStore.hasOpenService()) {
-      <ion-button expand="block" size="large" (click)="goToScan()">
-        <ion-icon name="qr-code-outline" slot="start"></ion-icon>
-        Scan to Clock In
-      </ion-button>
-    }
-  } @else {
-    <div class="centered-state">
-      <p>No active service right now.</p>
-    </div>
-  }
+    <!-- Upcoming Events Section -->
+    <section class="section">
+      <div class="section-header">
+        <h2 class="section-title">
+          <ion-icon name="calendar-outline"></ion-icon>
+          Upcoming Events
+        </h2>
+        @if (homeStore.eventsList().length > 0) {
+          <span class="section-badge">{{ homeStore.eventsList().length }} Event{{ homeStore.eventsList().length > 1 ? 's' : '' }}</span>
+        }
+      </div>
 
-  @if (lastEntry(); as entry) {
-    <div class="last-checkin">
-      <span>Last check-in: {{ entry.serviceName }}</span>
-      <app-status-pill [status]="entry.status" />
-    </div>
-  }
+      @if (homeStore.isLoading()) {
+        <div class="loading-state">
+          <ion-spinner name="crescent"></ion-spinner>
+          <p>Loading service events...</p>
+        </div>
+      } @else if (homeStore.eventsList().length > 0) {
+        <!-- Events Horizontal Carousel -->
+        <div class="events-carousel">
+          @for (event of homeStore.eventsList(); track event.id) {
+            <ion-card
+              class="event-card"
+              [class.event-card--active]="homeStore.activeEvent()?.id === event.id"
+              (click)="selectEvent(event.id)"
+            >
+              <ion-card-content class="event-card__content">
+                <div class="event-card__top">
+                  <ion-badge
+                    class="event-card__badge"
+                    [class.event-card__badge--open]="event.status === 'Open'"
+                    [class.event-card__badge--scheduled]="event.status === 'Scheduled'"
+                  >
+                    {{ event.status === 'Open' ? 'Happening Now' : 'Scheduled' }}
+                  </ion-badge>
+                  <span class="event-card__date">
+                    <ion-icon name="calendar-outline"></ion-icon>
+                    {{ event.serviceDate | date: 'EEEE, MMM d' }}
+                  </span>
+                </div>
+
+                <h3 class="event-card__title">{{ event.name }}</h3>
+
+                <div class="event-card__time">
+                  <ion-icon name="time-outline"></ion-icon>
+                  <span>
+                    {{ event.clockInWindowStart | date: 'shortTime' }} - {{ event.clockInWindowEnd | date: 'shortTime' }}
+                  </span>
+                </div>
+
+                <!-- Check-In Action Button on Card -->
+                <div class="event-card__actions">
+                  <ion-button
+                    class="event-card__checkin-btn"
+                    expand="block"
+                    (click)="$event.stopPropagation(); goToScan(event.id)"
+                  >
+                    <ion-icon name="qr-code-outline" slot="start"></ion-icon>
+                    Check-In & Scan QR Code
+                  </ion-button>
+                </div>
+              </ion-card-content>
+            </ion-card>
+          }
+        </div>
+      } @else {
+        <div class="empty-events-card">
+          <div class="empty-icon">
+            <ion-icon name="calendar-outline"></ion-icon>
+          </div>
+          <h3>No Scheduled Events</h3>
+          <p>There are no active or upcoming service events scheduled right now.</p>
+        </div>
+      }
+    </section>
+
+    <!-- Recent Attendance Section (Last 5 Checked-In Events) -->
+    <section class="section">
+      <div class="section-header">
+        <h2 class="section-title">
+          <ion-icon name="time-outline"></ion-icon>
+          Recent Attendance
+        </h2>
+        <button class="view-all-btn" (click)="goToHistory()">
+          View All
+          <ion-icon name="arrow-forward-outline"></ion-icon>
+        </button>
+      </div>
+
+      @if (historyStore.isLoading()) {
+        <div class="loading-state">
+          <ion-spinner name="crescent"></ion-spinner>
+          <p>Loading attendance history...</p>
+        </div>
+      } @else if (recentEntries().length > 0) {
+        <div class="recent-history-list">
+          @for (entry of recentEntries(); track entry.serviceEventId + entry.serviceDate) {
+            <div class="recent-history-item">
+              <div class="history-item__left">
+                <div class="history-item__icon">
+                  <ion-icon name="checkmark-circle-outline"></ion-icon>
+                </div>
+                <div class="history-item__details">
+                  <h4 class="history-item__name">{{ entry.serviceName }}</h4>
+                  <span class="history-item__date">
+                    {{ entry.serviceDate | date: 'mediumDate' }}
+                  </span>
+                </div>
+              </div>
+              <div class="history-item__right">
+                <app-status-pill [status]="entry.status"></app-status-pill>
+              </div>
+            </div>
+          }
+        </div>
+      } @else {
+        <div class="empty-history-card">
+          <p>No recent attendance check-ins yet.</p>
+        </div>
+      }
+    </section>
+  </div>
 </ion-content>

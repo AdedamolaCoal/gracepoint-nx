@@ -19,7 +19,7 @@ import {
   sparklesOutline,
   checkmarkCircleOutline,
 } from 'ionicons/icons';
-import { StatCardComponent, StatusPillComponent } from '@gracepoint/shared';
+import { StatCardComponent, StatusPillComponent, PaginationComponent } from '@gracepoint/shared';
 import { ReportsStore } from './reports.store';
 import { ReportsService } from './reports.service';
 
@@ -40,6 +40,7 @@ type ReportTab = 'service' | 'worker';
     IonBadge,
     StatCardComponent,
     StatusPillComponent,
+    PaginationComponent,
   ],
   templateUrl: './reports.page.html',
   styleUrl: './reports.page.scss',
@@ -91,7 +92,7 @@ export class ReportsPage {
     effect(() => {
       const workers = this.store.allWorkers();
       if (workers.length > 0 && !this.store.selectedWorkerId()) {
-        this.store.selectedWorkerId.set(workers[0].id);
+        this.store.setSelectedWorker(workers[0].id);
       }
     });
   }
@@ -101,7 +102,7 @@ export class ReportsPage {
   }
 
   onWorkerSelected(workerId: string): void {
-    this.store.selectedWorkerId.set(workerId);
+    this.store.setSelectedWorker(workerId);
   }
 
   exportCsv(): void {

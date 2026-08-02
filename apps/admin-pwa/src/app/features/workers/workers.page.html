@@ -7,10 +7,20 @@
           <ion-badge color="warning" class="workers-badge">{{ store.pendingCount() }} Pending</ion-badge>
         }
       </div>
-      <ion-button class="workers-add-btn" color="primary" (click)="openCreateModal()">
-        <ion-icon name="add-outline" slot="start"></ion-icon>
-        Add Worker
-      </ion-button>
+      <div class="workers-page-header__actions">
+        <ion-button class="workers-add-btn" fill="outline" color="secondary" (click)="downloadTemplate()" [disabled]="isDownloadingTemplate()">
+          <ion-icon name="download-outline" slot="start"></ion-icon>
+          Template CSV
+        </ion-button>
+        <ion-button class="workers-add-btn" fill="outline" color="primary" (click)="openImportModal()">
+          <ion-icon name="cloud-upload-outline" slot="start"></ion-icon>
+          Import CSV
+        </ion-button>
+        <ion-button class="workers-add-btn" color="primary" (click)="openCreateModal()">
+          <ion-icon name="add-outline" slot="start"></ion-icon>
+          Add Worker
+        </ion-button>
+      </div>
     </div>
 
     <div class="workers-page-header__controls">
@@ -18,13 +28,13 @@
         class="workers-searchbar"
         placeholder="Search worker by name, unit, or phone..."
         [value]="searchTerm()"
-        (ionInput)="searchTerm.set($any($event.detail.value))"
+        (ionInput)="onSearchTermChange($any($event.detail.value))"
       ></ion-searchbar>
 
       <ion-segment
         class="workers-segment"
         [value]="statusFilter()"
-        (ionChange)="statusFilter.set($any($event.detail.value))"
+        (ionChange)="onStatusFilterChange($any($event.detail.value))"
       >
         <ion-segment-button value="all">
           <ion-label>All Workers</ion-label>
@@ -138,6 +148,16 @@
         }
       </ion-row>
     </ion-grid>
+
+    <app-pagination
+      [page]="store.page()"
+      [pageSize]="store.pageSize()"
+      [totalCount]="store.totalCount()"
+      [totalPages]="store.totalPages()"
+      [hasNextPage]="store.hasNextPage()"
+      [hasPreviousPage]="store.hasPreviousPage()"
+      (pageChange)="store.setPage($event)"
+    ></app-pagination>
   }
 </ion-content>
 
@@ -180,19 +200,19 @@
           (ionInput)="newPhoneNumber.set($any($event.detail.value))"
         ></ion-input>
 
-        <ion-select
-          class="modal-select"
-          label="Department / Unit *"
-          labelPlacement="floating"
-          fill="outline"
-          placeholder="Select Department"
-          [value]="newUnitId()"
-          (ionChange)="newUnitId.set($any($event.detail.value))"
-        >
-          @for (unit of store.units(); track unit.id) {
-            <ion-select-option [value]="unit.id">{{ unit.name }}</ion-select-option>
-          }
-        </ion-select>
+        <div class="native-field-group">
+          <label class="native-field-label">Department / Unit *</label>
+          <select
+            class="native-select-input"
+            [value]="newUnitId()"
+            (change)="newUnitId.set($any($event.target).value)"
+          >
+            <option value="" disabled selected>Select Department / Unit</option>
+            @for (unit of store.units(); track unit.id) {
+              <option [value]="unit.id">{{ unit.name }}</option>
+            }
+          </select>
+        </div>
 
         @if (formError(); as msg) {
           <div class="modal-error-banner">
@@ -220,6 +240,167 @@
           Worker profiles will require PIN creation upon first login.
         </ion-note>
       </div>
+    </ion-content>
+  </ng-template>
+</ion-modal>
+
+<!-- Import workers CSV modal & Report -->
+<ion-modal
+  class="workers-modal workers-modal--import"
+  [isOpen]="showImportModal()"
+  (didDismiss)="showImportModal.set(false)"
+>
+  <ng-template>
+    <ion-header class="modal-header">
+      <ion-toolbar class="modal-toolbar">
+        <ion-title class="modal-title">
+          {{ importResult() ? 'Import Summary & Report' : 'Import Workers CSV' }}
+        </ion-title>
+        <ion-buttons slot="end">
+          <ion-button color="medium" (click)="showImportModal.set(false)">Close</ion-button>
+        </ion-buttons>
+      </ion-toolbar>
+    </ion-header>
+
+    <ion-content class="modal-content">
+      @if (importResult(); as res) {
+        <!-- Upload Result Summary View -->
+        <div class="import-report-view">
+          <div class="import-stats-grid">
+            <div class="stat-card stat-card--success">
+              <div class="stat-card__icon">
+                <ion-icon name="checkmark-circle-outline"></ion-icon>
+              </div>
+              <div class="stat-card__body">
+                <span class="stat-card__value">{{ res.imported }}</span>
+                <span class="stat-card__label">Workers Imported</span>
+              </div>
+            </div>
+
+            <div class="stat-card stat-card--warning">
+              <div class="stat-card__icon">
+                <ion-icon name="alert-circle-outline"></ion-icon>
+              </div>
+              <div class="stat-card__body">
+                <span class="stat-card__value">{{ res.skipped }}</span>
+                <span class="stat-card__label">Duplicates Skipped</span>
+              </div>
+            </div>
+
+            <div class="stat-card stat-card--danger">
+              <div class="stat-card__icon">
+                <ion-icon name="close-circle-outline"></ion-icon>
+              </div>
+              <div class="stat-card__body">
+                <span class="stat-card__value">{{ res.errors.length }}</span>
+                <span class="stat-card__label">Validation Errors</span>
+              </div>
+            </div>
+          </div>
+
+          @if (res.errors && res.errors.length > 0) {
+            <div class="import-errors-section">
+              <div class="import-errors-section__header">
+                <h4 class="import-errors-title">Import Errors Detail ({{ filteredImportErrors().length }} of {{ res.errors.length }})</h4>
+                <ion-button
+                  fill="outline"
+                  size="small"
+                  color="tertiary"
+                  class="copy-btn"
+                  (click)="copyErrorsToClipboard()"
+                >
+                  <ion-icon [name]="isCopied() ? 'checkmark-outline' : 'copy-outline'" slot="start"></ion-icon>
+                  {{ isCopied() ? 'Copied to Clipboard' : 'Copy All Errors' }}
+                </ion-button>
+              </div>
+
+              <ion-searchbar
+                class="errors-searchbar"
+                placeholder="Filter errors by unit or row..."
+                [value]="errorSearchTerm()"
+                (ionInput)="errorSearchTerm.set($any($event.detail.value))"
+              ></ion-searchbar>
+
+              <div class="import-errors-scrollbox">
+                @for (err of filteredImportErrors(); track $index) {
+                  <div class="error-item">
+                    <ion-icon name="alert-circle-outline" class="error-item__icon"></ion-icon>
+                    <span class="error-item__text">{{ err }}</span>
+                  </div>
+                }
+                @if (filteredImportErrors().length === 0) {
+                  <div class="no-errors-found">
+                    <ion-note>No errors match "{{ errorSearchTerm() }}"</ion-note>
+                  </div>
+                }
+              </div>
+            </div>
+          }
+
+          <div class="import-report-actions">
+            <ion-button expand="block" color="primary" (click)="showImportModal.set(false)">
+              <ion-icon name="checkmark-circle-outline" slot="start"></ion-icon>
+              Done & Refresh Roster
+            </ion-button>
+            <ion-button expand="block" fill="outline" color="medium" (click)="resetImport()">
+              Upload Another CSV
+            </ion-button>
+          </div>
+        </div>
+      } @else {
+        <!-- Upload Form View -->
+        <div class="modal-form">
+          <div class="modal-template-header">
+            <ion-note class="modal-hint">
+              Upload a CSV containing: <strong>fullName,phoneNumber,unitName</strong>
+            </ion-note>
+            <ion-button
+              fill="clear"
+              color="primary"
+              size="small"
+              (click)="downloadTemplate()"
+              [disabled]="isDownloadingTemplate()"
+            >
+              <ion-icon name="download-outline" slot="start"></ion-icon>
+              Download CSV Template
+            </ion-button>
+          </div>
+
+          <div class="file-upload-box" (click)="csvInput.click()">
+            <ion-icon name="document-text-outline"></ion-icon>
+            <p>{{ selectedFile() ? selectedFile()?.name : 'Choose CSV File to Upload' }}</p>
+            <input
+              #csvInput
+              type="file"
+              accept=".csv"
+              style="display: none"
+              (change)="onFileChange($event)"
+            />
+          </div>
+
+          @if (importError(); as msg) {
+            <div class="modal-error-banner">
+              <ion-icon name="alert-circle-outline"></ion-icon>
+              <span>{{ msg }}</span>
+            </div>
+          }
+
+          <ion-button
+            class="modal-submit-btn"
+            expand="block"
+            color="primary"
+            (click)="submitImport()"
+            [disabled]="isImporting() || !selectedFile()"
+          >
+            @if (isImporting()) {
+              <ion-spinner name="crescent"></ion-spinner>
+              <span>Uploading & Importing...</span>
+            } @else {
+              <span>Start Import</span>
+            }
+          </ion-button>
+        </div>
+      }
     </ion-content>
   </ng-template>
 </ion-modal>

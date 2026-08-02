@@ -1,0 +1,134 @@
+<div class="auth-form">
+  @if (successMessage(); as msg) {
+    <div class="auth-form__header">
+      <h1 class="auth-form__title">
+        Registration <span class="auth-form__title-highlight">Successful 🎉</span>
+      </h1>
+      <p class="auth-form__subtitle">{{ msg }}</p>
+    </div>
+
+    <ion-button class="auth-form__button" expand="block" (click)="goToLogin()">
+      Go to Sign In
+    </ion-button>
+  } @else {
+    <div class="auth-form__header">
+      <h1 class="auth-form__title">
+        Worker <span class="auth-form__title-highlight">Registration</span>
+      </h1>
+      <p class="auth-form__subtitle">
+        Enter your phone number and set a PIN. If you're already on the roster, this activates your account.
+      </p>
+    </div>
+
+    <form (ngSubmit)="submit()" class="auth-form__body">
+      <div class="auth-form__field">
+        <label class="auth-form__label">
+          Phone Number<span class="auth-form__required">*</span>
+        </label>
+        <ion-input
+          class="auth-form__input"
+          type="tel"
+          placeholder="08012345678"
+          [value]="phoneNumber()"
+          (ionInput)="phoneNumber.set($any($event.detail.value))"
+        ></ion-input>
+      </div>
+
+      <div class="auth-form__field">
+        <label class="auth-form__label">
+          Set a PIN<span class="auth-form__required">*</span>
+        </label>
+        <ion-input
+          class="auth-form__input"
+          type="password"
+          inputmode="numeric"
+          placeholder="••••"
+          [value]="pin()"
+          (ionInput)="pin.set($any($event.detail.value))"
+        ></ion-input>
+      </div>
+
+      <div class="auth-form__field">
+        <label class="auth-form__label">
+          Confirm PIN<span class="auth-form__required">*</span>
+        </label>
+        <ion-input
+          class="auth-form__input"
+          type="password"
+          inputmode="numeric"
+          placeholder="••••"
+          [value]="confirmPin()"
+          (ionInput)="confirmPin.set($any($event.detail.value))"
+        ></ion-input>
+      </div>
+
+      <button
+        type="button"
+        class="auth-form__toggle-btn"
+        (click)="showNewWorkerFields.set(!showNewWorkerFields())"
+      >
+        {{ showNewWorkerFields() ? 'Hide additional details' : 'Not on the roster yet? Add your details' }}
+      </button>
+
+      @if (showNewWorkerFields()) {
+        <div class="auth-form__field">
+          <label class="auth-form__label">
+            Full Name<span class="auth-form__required">*</span>
+          </label>
+          <ion-input
+            class="auth-form__input"
+            type="text"
+            placeholder="e.g. Jane Doe"
+            [value]="fullName()"
+            (ionInput)="fullName.set($any($event.detail.value))"
+          ></ion-input>
+        </div>
+
+        <div class="auth-form__field">
+          <label class="auth-form__label">
+            Department / Unit<span class="auth-form__required">*</span>
+          </label>
+          <select
+            class="auth-form__native-select"
+            [value]="unitId()"
+            (change)="unitId.set($any($event.target).value)"
+          >
+            <option value="" disabled selected>Select Department</option>
+            @for (unit of unitsStore.units(); track unit.id) {
+              <option [value]="unit.id">{{ unit.name }}</option>
+            }
+          </select>
+        </div>
+
+        <p class="auth-form__hint-text">
+          New registrations need admin approval before you can clock in - you'll be notified once approved.
+        </p>
+      }
+
+      @if (errorMessage(); as msg) {
+        <div class="auth-form__error">
+          <ion-text color="danger"><p>{{ msg }}</p></ion-text>
+        </div>
+      }
+
+      <ion-button
+        class="auth-form__button"
+        expand="block"
+        type="submit"
+        [disabled]="isSubmitting()"
+      >
+        @if (isSubmitting()) {
+          <ion-spinner name="crescent"></ion-spinner>
+          <span>Registering...</span>
+        } @else {
+          <span>Register Account</span>
+        }
+      </ion-button>
+
+      <div class="auth-form__footer-text">
+        <span>Already have an account?</span>
+        <a [routerLink]="['/auth/login']" class="auth-form__link">Sign in here</a>
+      </div>
+    </form>
+  }
+</div>

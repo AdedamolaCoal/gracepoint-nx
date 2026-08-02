@@ -8,8 +8,8 @@
     "libs/*"
   ],
   "scripts": {
-    "start:admin": "ng serve admin-pwa",
-    "start:worker": "ng serve worker-pwa",
+    "start:admin": "ng serve admin-pwa --host 0.0.0.0 --allowed-hosts",
+    "start:worker": "ng serve worker-pwa --host 0.0.0.0 --allowed-hosts",
     "build:admin": "ng build admin-pwa",
     "build:worker": "ng build worker-pwa",
     "typecheck": "tsc -p apps/admin-pwa/tsconfig.json --noEmit && tsc -p apps/worker-pwa/tsconfig.json --noEmit"
@@ -30,6 +30,7 @@
     "@ionic/angular": "^8.8.15",
     "angularx-qrcode": "^22.0.1",
     "dexie": "^4.4.4",
+    "jsqr": "^1.4.0",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0"
   },

@@ -122,6 +122,51 @@
       </div>
     }
 
+    <!-- Worker Registration QR Code Section -->
+    <div class="dashboard-section">
+      <div class="section-header">
+        <div class="section-header__title-group">
+          <h2 class="section-title">Worker Registration QR Code</h2>
+          <span class="section-subtitle">Workers scan this QR code on their mobile devices to register or claim their worker account.</span>
+        </div>
+      </div>
+
+      <div class="dashboard-qr-card">
+        @if (registrationUrl(); as url) {
+          <div class="dashboard-qr-card__body">
+            <div class="dashboard-qr-card__qr">
+              <app-qr-code-branded [data]="url" [size]="220" />
+            </div>
+            <div class="dashboard-qr-card__details">
+              <h3 class="dashboard-qr-card__heading">Active Registration Link & QR</h3>
+              <p class="dashboard-qr-card__text">
+                Display or print this QR code at church events or worker onboarding sessions. Workers scan it to open the registration form directly on their mobile device.
+              </p>
+              <div class="dashboard-qr-card__actions">
+                <ion-button color="primary" fill="outline" (click)="store.generateInvite()">
+                  <ion-icon name="refresh-outline" slot="start"></ion-icon>
+                  Regenerate QR
+                </ion-button>
+                <ion-button color="danger" fill="outline" (click)="store.revokeInvite()">
+                  <ion-icon name="ban-outline" slot="start"></ion-icon>
+                  Revoke QR
+                </ion-button>
+              </div>
+            </div>
+          </div>
+        } @else {
+          <div class="dashboard-qr-card__empty">
+            <ion-icon name="qr-code-outline" class="dashboard-qr-card__empty-icon"></ion-icon>
+            <p>No active registration QR code currently generated.</p>
+            <ion-button color="primary" (click)="store.generateInvite()">
+              <ion-icon name="qr-code-outline" slot="start"></ion-icon>
+              Generate Worker Registration QR Code
+            </ion-button>
+          </div>
+        }
+      </div>
+    </div>
+
     <!-- Pending Worker Approvals Quick Section -->
     @if (store.pendingWorkers().length > 0) {
       <div class="dashboard-section">

@@ -1,5 +1,6 @@
 import { Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { Router, RouterLink } from '@angular/router';
 import {
   IonInput,
   IonText,
@@ -10,9 +11,9 @@ import {
 } from '@ionic/angular/standalone';
 import { AuthService } from '@core/auth/auth.service';
 import { AuthState } from '@core/auth/auth.state';
-import { Router } from '@angular/router';
 import { addIcons } from 'ionicons';
 import { eyeOutline, eyeOffOutline } from 'ionicons/icons';
+import { extractErrorMessage } from '@gracepoint/shared';
 
 @Component({
   selector: 'app-login',
@@ -21,6 +22,7 @@ import { eyeOutline, eyeOffOutline } from 'ionicons/icons';
   standalone: true,
   imports: [
     FormsModule,
+    RouterLink,
     IonInput,
     IonText,
     IonButton,
@@ -54,38 +56,50 @@ export class LoginPage {
       event.preventDefault();
     }
 
-    if (!this.phoneNumber() || !this.pin()) {
-      this.errorMessage.set('Enter your phone number and pin.');
+    const phone = this.phoneNumber().trim();
+    if (!phone) {
+      this.errorMessage.set('Please enter your phone number.');
       return;
     }
 
     this.isSubmitting.set(true);
+    this.errorMessage.set(null);
 
-    this._service.login(this.phoneNumber(), this.pin()).subscribe({
+    const pinVal = this.pin().trim() ? this.pin().trim() : null;
+
+    this._service.login(phone, pinVal).subscribe({
       next: (res) => {
         this.isSubmitting.set(false);
 
-        if (!res.success) {
-          this.errorMessage.set(res.message ?? 'Login failed!');
+        if (!res.success || !res.data) {
+          this.errorMessage.set(res.message ?? 'Invalid Phone number or PIN');
           return;
         }
+
         const data = res.data;
+        const requiresPinSetup = Boolean(data['requiresPinSetup']);
+        const fullName = (data['fullName'] || data['name'] || '') as string;
+        const unitId = (data['unitId'] || '') as string;
+        const unitName = (data['unitName'] || '') as string;
 
-        if (data) {
-          this._state.setSession(data.token, data.refreshToken, {
-            id: data.id,
-            fullName: data.fullName,
-            unitId: data.unitId,
-            unitName: data.unitName,
-          });
+        this._state.setSession(data.token, data.refreshToken, {
+          id: data['id'] as string,
+          fullName,
+          unitId,
+          unitName,
+          requiresPinSetup,
+        });
+
+        if (requiresPinSetup) {
+          this._router.navigateByUrl('/set-pin');
+        } else {
+          this._router.navigateByUrl('/home');
         }
-
-        this._router.navigateByUrl('/home');
       },
       error: (err) => {
         this.isSubmitting.set(false);
         this.errorMessage.set(
-          err?.error?.message ?? 'Could not reach the server, please try again.',
+          extractErrorMessage(err, 'Invalid Phone number or PIN.'),
         );
       },
     });

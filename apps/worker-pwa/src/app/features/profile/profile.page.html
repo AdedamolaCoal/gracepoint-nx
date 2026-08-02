@@ -1,77 +1,96 @@
-<ion-header>
-  <ion-toolbar>
-    <ion-title>Me</ion-title>
+<ion-header class="ion-no-border">
+  <ion-toolbar class="page-toolbar">
+    <ion-title>Me & Settings</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content class="ion-padding">
+<ion-content class="profile-content ion-padding">
   @if (profileStore.isLoading()) {
     <div class="centered-state">
       <ion-spinner name="crescent"></ion-spinner>
+      <p>Loading profile...</p>
     </div>
   } @else if (profileStore.profile(); as profile) {
-    <ion-list>
-      <ion-item>
-        <ion-label>
-          <p>Full Name</p>
-          <h2>{{ profile.fullName }}</h2>
-        </ion-label>
-      </ion-item>
-      <ion-item>
-        <ion-label>
-          <p>Department</p>
-          <h2>{{ profile.unitName }}</h2>
-        </ion-label>
-      </ion-item>
-      <ion-item>
-        <ion-label>
-          <p>Phone Number</p>
-          <h2>{{ profile.phoneNumber }}</h2>
-        </ion-label>
-      </ion-item>
-    </ion-list>
-
-    <ion-button expand="block" fill="outline" (click)="showChangePin.set(!showChangePin())">
-      Change PIN
-    </ion-button>
-
-    @if (showChangePin()) {
-      <div class="pin-form">
-        <ion-input
-          label="Current PIN"
-          labelPlacement="floating"
-          fill="outline"
-          type="password"
-          inputmode="numeric"
-          [value]="currentPin()"
-          (ionInput)="currentPin.set($any($event.detail.value))"
-        ></ion-input>
-        <ion-input
-          label="New PIN"
-          labelPlacement="floating"
-          fill="outline"
-          type="password"
-          inputmode="numeric"
-          [value]="newPin()"
-          (ionInput)="newPin.set($any($event.detail.value))"
-        ></ion-input>
-
-        @if (pinMessage(); as msg) {
-          <ion-text [color]="pinError() ? 'danger' : 'success'"
-            ><p>{{ msg }}</p></ion-text
-          >
-        }
-
-        <ion-button expand="block" (click)="submitPinChange()" [disabled]="isSubmittingPin()">
-          @if (isSubmittingPin()) {
-            <ion-spinner name="crescent"></ion-spinner>
-          } @else {
-            Update PIN
-          }
-        </ion-button>
+    <div class="profile-container">
+      <div class="profile-card">
+        <div class="profile-avatar">
+          {{ profile.fullName ? profile.fullName.charAt(0) : 'W' }}
+        </div>
+        <h2 class="profile-name">{{ profile.fullName }}</h2>
+        <p class="profile-unit">{{ profile.unitName }}</p>
       </div>
-    }
 
-    <ion-button expand="block" color="danger" fill="clear" (click)="logout()"> Log Out </ion-button>
+      <div class="info-section">
+        <div class="info-row">
+          <span class="info-label">Full Name</span>
+          <span class="info-value">{{ profile.fullName }}</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">Department / Unit</span>
+          <span class="info-value">{{ profile.unitName }}</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">Phone Number</span>
+          <span class="info-value">{{ profile.phoneNumber }}</span>
+        </div>
+      </div>
+
+      <ion-button
+        class="action-btn"
+        expand="block"
+        fill="outline"
+        (click)="showChangePin.set(!showChangePin())"
+      >
+        Change PIN
+      </ion-button>
+
+      @if (showChangePin()) {
+        <div class="pin-form">
+          <div class="form-field">
+            <label class="form-label">Current PIN</label>
+            <ion-input
+              class="form-input"
+              type="password"
+              inputmode="numeric"
+              placeholder="Enter current PIN"
+              maxlength="4"
+              [value]="currentPin()"
+              (ionInput)="currentPin.set($any($event.detail.value))"
+            ></ion-input>
+          </div>
+
+          <div class="form-field">
+            <label class="form-label">New PIN</label>
+            <ion-input
+              class="form-input"
+              type="password"
+              inputmode="numeric"
+              placeholder="Enter new 4-digit PIN"
+              maxlength="4"
+              [value]="newPin()"
+              (ionInput)="newPin.set($any($event.detail.value))"
+            ></ion-input>
+          </div>
+
+          @if (pinMessage(); as msg) {
+            <div class="message-box" [class.error]="pinError()">
+              <p>{{ msg }}</p>
+            </div>
+          }
+
+          <ion-button class="submit-pin-btn" expand="block" (click)="submitPinChange()" [disabled]="isSubmittingPin()">
+            @if (isSubmittingPin()) {
+              <ion-spinner name="crescent"></ion-spinner>
+            } @else {
+              Update PIN
+            }
+          </ion-button>
+        </div>
+      }
+
+      <ion-button class="logout-btn" expand="block" color="danger" fill="clear" (click)="logout()">
+        Log Out
+      </ion-button>
+    </div>
   }
 </ion-content>

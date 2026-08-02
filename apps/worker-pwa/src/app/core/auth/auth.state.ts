@@ -32,6 +32,7 @@ export class AuthState {
   readonly access = this._access.asReadonly();
   readonly currentWorker = this._currentWorker.asReadonly();
   readonly isAuthenticated = computed(() => this._access() !== null);
+  readonly requiresPinSetup = computed(() => this._currentWorker()?.requiresPinSetup ?? false);
 
   setSession(accessToken: string, refreshToken: string, worker: WorkerSession) {
     this.storage.set('access_token', accessToken);
@@ -40,6 +41,15 @@ export class AuthState {
     this._access.set(accessToken);
     this._refresh.set(refreshToken);
     this._currentWorker.set(worker);
+  }
+
+  setRequiresPinSetup(requires: boolean): void {
+    const current = this._currentWorker();
+    if (current) {
+      const updated: WorkerSession = { ...current, requiresPinSetup: requires };
+      this.storage.set(SESSION_KEY, JSON.stringify(updated));
+      this._currentWorker.set(updated);
+    }
   }
 
   updateAccessToken(accessToken: string, refreshToken: string): void {

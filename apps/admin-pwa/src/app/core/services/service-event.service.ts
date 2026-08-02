@@ -15,6 +15,14 @@ export class ServiceEventService {
     return this.http.post<ServiceEventSummary>(API.serviceEvents, request);
   }
 
+  update(id: string, request: CreateServiceEventRequest): Observable<void> {
+    return this.http.put<void>(`${API.serviceEvents}/${id}`, request);
+  }
+
+  delete(id: string): Observable<void> {
+    return this.http.delete<void>(`${API.serviceEvents}/${id}`);
+  }
+
   close(id: string): Observable<void> {
     return this.http.post<void>(`${API.serviceEvents}/${id}/close`, {});
   }

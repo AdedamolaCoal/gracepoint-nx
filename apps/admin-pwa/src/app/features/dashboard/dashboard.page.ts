@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, computed } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import {
@@ -21,9 +21,13 @@ import {
   arrowForwardOutline,
   personOutline,
   callOutline,
+  qrCodeOutline,
+  refreshOutline,
+  banOutline,
 } from 'ionicons/icons';
 import { DashboardStore } from './dashboard.store';
-import { StatCardComponent } from '@gracepoint/shared';
+import { StatCardComponent, QrCodeBrandedComponent } from '@gracepoint/shared';
+import { environment } from '@env/environment';
 
 @Component({
   selector: 'app-dashboard',
@@ -39,12 +43,18 @@ import { StatCardComponent } from '@gracepoint/shared';
     IonChip,
     IonLabel,
     StatCardComponent,
+    QrCodeBrandedComponent,
   ],
   templateUrl: './dashboard.page.html',
   styleUrl: './dashboard.page.scss',
 })
 export class DashboardPage {
   protected readonly store = inject(DashboardStore);
+
+  protected readonly registrationUrl = computed(() => {
+    const token = this.store.activeInviteToken();
+    return token ? `${environment.workerBaseUrl}/register?token=${token}` : null;
+  });
 
   constructor() {
     addIcons({
@@ -57,6 +67,9 @@ export class DashboardPage {
       arrowForwardOutline,
       personOutline,
       callOutline,
+      qrCodeOutline,
+      refreshOutline,
+      banOutline,
     });
   }
 

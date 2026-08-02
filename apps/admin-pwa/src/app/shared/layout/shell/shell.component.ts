@@ -6,9 +6,6 @@ import { AdminRole } from '@core/models/admin-session.model';
 import {
   IonSplitPane,
   IonMenu,
-  IonHeader,
-  IonToolbar,
-  IonTitle,
   IonContent,
   IonList,
   IonItem,
@@ -18,14 +15,12 @@ import {
   IonMenuButton,
   IonRouterOutlet,
 } from '@ionic/angular/standalone';
-
-
-
 import { addIcons } from 'ionicons';
 import {
   homeOutline,
   calendarOutline,
   peopleOutline,
+  businessOutline,
   barChartOutline,
   settingsOutline,
   logOutOutline,
@@ -56,10 +51,6 @@ interface NavItem {
     IonMenuButton,
     IonRouterOutlet,
   ],
-
-
-
-
   templateUrl: './shell.component.html',
   styleUrl: './shell.component.scss',
 })
@@ -74,8 +65,9 @@ export class ShellComponent {
     { label: 'Dashboard', path: '/app/dashboard', icon: 'home-outline', roles: ['SuperAdmin', 'Admin', 'UnitLeader'] },
     { label: 'Services', path: '/app/services', icon: 'calendar-outline', roles: ['SuperAdmin', 'Admin'] },
     { label: 'Workers', path: '/app/workers', icon: 'people-outline', roles: ['SuperAdmin', 'Admin', 'UnitLeader'] },
+    { label: 'Admins & Departments', path: '/app/departments', icon: 'business-outline', roles: ['SuperAdmin', 'Admin'] },
     { label: 'Reports', path: '/app/reports', icon: 'bar-chart-outline', roles: ['SuperAdmin', 'Admin', 'UnitLeader'] },
-    { label: 'Settings', path: '/app/settings', icon: 'settings-outline', roles: ['SuperAdmin', 'Admin'] },
+    { label: 'Settings', path: '/app/settings', icon: 'settings-outline', roles: ['SuperAdmin', 'Admin', 'UnitLeader'] },
   ];
 
   protected readonly visibleNavItems = computed(() => {
@@ -89,6 +81,7 @@ export class ShellComponent {
       homeOutline,
       calendarOutline,
       peopleOutline,
+      businessOutline,
       barChartOutline,
       settingsOutline,
       logOutOutline,

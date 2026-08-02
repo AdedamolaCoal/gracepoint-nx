@@ -38,12 +38,22 @@ export const routes: Routes = [
         loadComponent: () => import('./features/workers/workers.page').then((m) => m.WorkersPage),
       },
       {
+        path: 'departments',
+        canMatch: [roleGuard(['SuperAdmin', 'Admin'])],
+        loadComponent: () => import('./features/departments/departments.page').then((m) => m.DepartmentsPage),
+      },
+      {
+        path: 'admin-users',
+        redirectTo: 'departments',
+        pathMatch: 'full',
+      },
+      {
         path: 'reports',
         loadComponent: () => import('./features/reports/reports.page').then((m) => m.ReportsPage),
       },
       {
         path: 'settings',
-        canMatch: [roleGuard(['SuperAdmin', 'Admin'])],
+        canMatch: [roleGuard(['SuperAdmin', 'Admin', 'UnitLeader'])],
         loadComponent: () => import('./features/settings/settings.page').then((m) => m.SettingsPage),
       },
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },

@@ -1,14 +1,20 @@
-import { environment } from '@env/environment';
+import { environment } from "@env/environment";
 
-export const BASE_URL = environment.baseUrl;
+export const BASE_URL = `${environment.baseUrl}/api`;
 
 export const API = {
-  workerLogin: `${BASE_URL}/api/auth/worker/login`,
-  refresh: `${BASE_URL}/api/auth/refresh`,
-  logout: `${BASE_URL}/api/auth/logout`,
-  clockIn: `${BASE_URL}/api/attendance/clock-in`,
-  currentServiceEvent: `${BASE_URL}/api/service-events/current`,
-  workerMe: `${BASE_URL}/api/workers/me`,
-  changePin: `${BASE_URL}/api/workers/me/change-pin`,
-  attendanceHistory: (workerId: string) => `${BASE_URL}/api/admin/reports/worker/${workerId}`,
+  workerLogin: `${BASE_URL}/auth/worker/login`,
+  refresh: `${BASE_URL}/auth/refresh`,
+  logout: `${BASE_URL}/auth/logout`,
+  clockIn: `${BASE_URL}/attendance/clock-in`,
+  currentServiceEvent: `${BASE_URL}/service-events/current`,
+  workerMe: `${BASE_URL}/workers/me`,
+  setPin: `${BASE_URL}/workers/me/set-pin`,
+  changePin: `${BASE_URL}/workers/me/change-pin`,
+  registerDevice: `${BASE_URL}/workers/me/device`,
+  register: `${BASE_URL}/auth/register`,
+  units: `${BASE_URL}/units`,
+  unregisterDevice: (token: string) =>
+    `${BASE_URL}/workers/me/device/${encodeURIComponent(token)}`,
+  attendanceHistory: (workerId: string) => `${BASE_URL}/attendance/history`,
 } as const;

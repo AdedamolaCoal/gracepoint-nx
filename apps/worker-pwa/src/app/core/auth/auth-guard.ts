@@ -1,25 +1,30 @@
 import { inject } from '@angular/core';
-import { CanMatchFn, Router } from '@angular/router';
+import { CanMatchFn } from '@angular/router';
 import { AuthState } from './auth.state';
 
-export const authGuard: CanMatchFn = (route, state) => {
-  const authtState = inject(AuthState);
-  const router = inject(Router);
-
-  if (authtState.isAuthenticated()) {
-    return true;
-  }
-
-  return router.createUrlTree(['/login']);
+/**
+ * Allows matching the /auth route block ONLY if user is NOT authenticated.
+ * If authenticated, returns false so Angular Router skips /auth routes.
+ */
+export const guestGuard: CanMatchFn = () => {
+  const authState = inject(AuthState);
+  return !authState.isAuthenticated();
 };
 
-export const guestGuard: CanMatchFn = (route, state) => {
-  const authtState = inject(AuthState);
-  const router = inject(Router);
+/**
+ * Allows matching /set-pin ONLY if user IS authenticated AND requires PIN setup.
+ * Otherwise returns false.
+ */
+export const pinSetupRequiredGuard: CanMatchFn = () => {
+  const authState = inject(AuthState);
+  return authState.isAuthenticated() && authState.requiresPinSetup();
+};
 
-  if (!authtState.isAuthenticated()) {
-    return true;
-  }
-
-  return router.createUrlTree(['/']);
+/**
+ * Allows matching main app tabs ONLY if user IS authenticated AND PIN setup is complete.
+ * Otherwise returns false.
+ */
+export const pinSetupCompletedGuard: CanMatchFn = () => {
+  const authState = inject(AuthState);
+  return authState.isAuthenticated() && !authState.requiresPinSetup();
 };

@@ -1,0 +1,266 @@
+<ion-content class="departments-content">
+  <!-- Page Header -->
+  <div class="departments-page-header">
+    <div class="departments-page-header__left">
+      <h1 class="departments-title">Admins & Departments</h1>
+      <p class="departments-subtitle">Configure ministry departments and manage administrator access accounts.</p>
+    </div>
+
+    <ion-segment
+      class="departments-segment"
+      [value]="activeTab()"
+      (ionChange)="activeTab.set($any($event.detail.value))"
+    >
+      <ion-segment-button value="units">
+        <span>Departments</span>
+      </ion-segment-button>
+      @if (isSuperAdmin()) {
+        <ion-segment-button value="admins">
+          <span>Admin Accounts</span>
+        </ion-segment-button>
+      }
+    </ion-segment>
+  </div>
+
+  <!-- Departments Tab -->
+  @if (activeTab() === 'units') {
+    <div class="departments-card">
+      <div class="departments-card__header">
+        <div class="departments-card__icon-box">
+          <ion-icon name="business-outline"></ion-icon>
+        </div>
+        <div>
+          <h2 class="departments-card__title">Create New Department</h2>
+          <p class="departments-card__subtitle">Register a new church unit for assigning workers and unit leaders.</p>
+        </div>
+      </div>
+
+      <div class="departments-card__body">
+        <div class="inline-create-form">
+          <ion-input
+            class="departments-input"
+            label="Department Name"
+            labelPlacement="floating"
+            fill="outline"
+            placeholder="e.g. Media & Technical, Protocol, Choir..."
+            [value]="newUnitName()"
+            (ionInput)="newUnitName.set($any($event.detail.value))"
+          ></ion-input>
+
+          <ion-button
+            color="primary"
+            class="departments-submit-btn"
+            (click)="createUnit()"
+            [disabled]="isCreatingUnit() || !newUnitName().trim()"
+          >
+            <ion-icon name="add-outline" slot="start"></ion-icon>
+            @if (isCreatingUnit()) {
+              <ion-spinner name="crescent"></ion-spinner>
+            } @else {
+              <span>Add Department</span>
+            }
+          </ion-button>
+        </div>
+      </div>
+    </div>
+
+    <div class="departments-section">
+      <div class="section-header">
+        <h2 class="section-title">Registered Departments</h2>
+        <span class="section-badge">{{ store.units().length }} Total Units</span>
+      </div>
+
+      @if (store.isLoadingUnits()) {
+        <div class="centered-state">
+          <ion-spinner name="crescent" color="primary"></ion-spinner>
+          <span>Loading departments...</span>
+        </div>
+      } @else if (store.units().length > 0) {
+        <div class="departments-table-container">
+          <table class="departments-table">
+            <thead>
+              <tr>
+                <th>Department Name</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (unit of store.units(); track unit.id) {
+                <tr>
+                  <td>
+                    <div class="table-unit-item">
+                      <div class="table-unit-item__icon">
+                        <ion-icon name="business-outline"></ion-icon>
+                      </div>
+                      <span class="table-unit-item__name">{{ unit.name }}</span>
+                    </div>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      } @else {
+        <div class="departments-empty-state">
+          <p>No departments registered yet. Use the form above to add your first church unit.</p>
+        </div>
+      }
+    </div>
+  }
+
+  <!-- Admin Accounts Tab -->
+  @if (activeTab() === 'admins' && isSuperAdmin()) {
+    <div class="departments-card">
+      <div class="departments-card__header">
+        <div class="departments-card__icon-box">
+          <ion-icon name="person-add-outline"></ion-icon>
+        </div>
+        <div>
+          <h2 class="departments-card__title">Add Admin or Unit Leader Account</h2>
+          <p class="departments-card__subtitle">Create an access account for a church administrator or department leader.</p>
+        </div>
+      </div>
+
+      <div class="departments-card__body">
+        <div class="admin-users-form-grid">
+          <ion-input
+            class="departments-input"
+            label="Full Name *"
+            labelPlacement="floating"
+            fill="outline"
+            placeholder="e.g. John Doe"
+            [value]="newAdminName()"
+            (ionInput)="newAdminName.set($any($event.detail.value))"
+          ></ion-input>
+
+          <ion-input
+            class="departments-input"
+            label="Email Address *"
+            labelPlacement="floating"
+            fill="outline"
+            type="email"
+            placeholder="admin@gracepoint.org"
+            [value]="newAdminEmail()"
+            (ionInput)="newAdminEmail.set($any($event.detail.value))"
+          ></ion-input>
+
+          <div class="password-input-wrapper">
+            <ion-input
+              class="departments-input"
+              label="Temporary Password *"
+              labelPlacement="floating"
+              fill="outline"
+              [type]="showAdminPassword() ? 'text' : 'password'"
+              [value]="newAdminPassword()"
+              (ionInput)="newAdminPassword.set($any($event.detail.value))"
+            ></ion-input>
+            <button
+              type="button"
+              class="eye-toggle-button"
+              (click)="toggleAdminPasswordVisibility()"
+              title="Toggle Password Visibility"
+            >
+              <ion-icon [name]="showAdminPassword() ? 'eye-off-outline' : 'eye-outline'"></ion-icon>
+            </button>
+          </div>
+
+          <div class="native-field-group">
+            <label class="native-field-label">Access Role *</label>
+            <select
+              class="native-select-input"
+              [value]="newAdminRole()"
+              (change)="newAdminRole.set($any($event.target).value)"
+            >
+              <option value="Admin">Admin</option>
+              <option value="UnitLeader">Unit Leader</option>
+            </select>
+          </div>
+
+          <div class="native-field-group">
+            <label class="native-field-label">Assigned Department / Unit {{ newAdminRole() === 'UnitLeader' ? '*' : '(Optional)' }}</label>
+            <select
+              class="native-select-input"
+              [value]="newAdminUnitId() || ''"
+              (change)="newAdminUnitId.set($any($event.target).value || null)"
+            >
+              <option value="">Select Department / Unit</option>
+              @for (unit of store.units(); track unit.id) {
+                <option [value]="unit.id">{{ unit.name }}</option>
+              }
+            </select>
+          </div>
+        </div>
+
+        @if (adminFormMessage(); as msg) {
+          <div [class.form-alert-error]="adminFormError()" [class.form-alert-success]="!adminFormError()">
+            {{ msg }}
+          </div>
+        }
+
+        <div class="departments-form-actions">
+          <ion-button
+            color="primary"
+            class="departments-submit-btn"
+            (click)="submitCreateAdmin()"
+            [disabled]="isCreatingAdmin()"
+          >
+            @if (isCreatingAdmin()) {
+              <ion-spinner name="crescent"></ion-spinner>
+            } @else {
+              <span>Create Account</span>
+            }
+          </ion-button>
+        </div>
+      </div>
+    </div>
+
+    <div class="departments-section">
+      <div class="section-header">
+        <h2 class="section-title">Admin Accounts Directory</h2>
+        <span class="section-badge">{{ store.admins().length }} Total Accounts</span>
+      </div>
+
+      @if (store.isLoadingAdmins()) {
+        <div class="centered-state">
+          <ion-spinner name="crescent" color="primary"></ion-spinner>
+          <span>Loading admin accounts...</span>
+        </div>
+      } @else if (store.admins().length > 0) {
+        <div class="departments-table-container">
+          <table class="departments-table">
+            <thead>
+              <tr>
+                <th>Admin Name</th>
+                <th>Email Address</th>
+                <th class="table-align-right">Access Role</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (admin of store.admins(); track admin.id) {
+                <tr>
+                  <td>
+                    <div class="table-user">
+                      <div class="table-user__avatar">
+                        {{ admin.name.charAt(0).toUpperCase() }}
+                      </div>
+                      <span class="table-user__name">{{ admin.name }}</span>
+                    </div>
+                  </td>
+                  <td>
+                    <span class="table-text-sub">{{ admin.email }}</span>
+                  </td>
+                  <td class="table-align-right">
+                    <ion-badge color="primary" class="table-badge">{{ admin.role }}</ion-badge>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      } @else {
+        <div class="departments-empty-state">
+          <p>No admin accounts registered yet. Use the form above to add an admin account.</p>
+        </div>
+      }
+    </div>
+  }
+</ion-content>

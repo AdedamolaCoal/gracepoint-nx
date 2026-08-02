@@ -1,0 +1,73 @@
+<div class="auth-form">
+  <div class="auth-form__header">
+    <div class="set-pin-badge">
+      <ion-icon name="lock-closed-outline"></ion-icon>
+    </div>
+    <h1 class="auth-form__title">
+      Set Your Security <span class="auth-form__title-highlight">PIN</span>
+    </h1>
+    <p class="auth-form__subtitle">
+      Welcome to Gracepoint! Since this is your first time signing in, please create a 4-digit PIN to secure your worker account.
+    </p>
+  </div>
+
+  <form (ngSubmit)="onSubmit($event)" class="auth-form__body">
+    <div class="auth-form__field">
+      <label class="auth-form__label">
+        New 4-Digit PIN<span class="auth-form__required">*</span>
+      </label>
+      <ion-input
+        class="auth-form__input"
+        [type]="showPin() ? 'text' : 'password'"
+        placeholder="e.g. 1234"
+        maxlength="4"
+        [value]="newPin()"
+        (ionInput)="newPin.set($any($event.detail.value))"
+      >
+        <button
+          slot="end"
+          type="button"
+          class="auth-form__eye-btn"
+          (click)="togglePinVisibility()"
+          aria-label="Toggle PIN visibility"
+        >
+          <ion-icon [name]="showPin() ? 'eye-off-outline' : 'eye-outline'"></ion-icon>
+        </button>
+      </ion-input>
+    </div>
+
+    <div class="auth-form__field">
+      <label class="auth-form__label">
+        Confirm PIN<span class="auth-form__required">*</span>
+      </label>
+      <ion-input
+        class="auth-form__input"
+        [type]="showPin() ? 'text' : 'password'"
+        placeholder="Re-enter 4-digit PIN"
+        maxlength="4"
+        [value]="confirmPin()"
+        (ionInput)="confirmPin.set($any($event.detail.value))"
+      ></ion-input>
+    </div>
+
+    @if (errorMessage(); as msg) {
+      <div class="auth-form__error">
+        <ion-text color="danger"><p>{{ msg }}</p></ion-text>
+      </div>
+    }
+
+    <ion-button
+      class="auth-form__button"
+      expand="block"
+      type="submit"
+      [disabled]="isSubmitting() || !newPin() || !confirmPin()"
+    >
+      @if (isSubmitting()) {
+        <ion-spinner name="crescent"></ion-spinner>
+        Setting PIN...
+      } @else {
+        Set PIN & Continue
+      }
+    </ion-button>
+  </form>
+</div>

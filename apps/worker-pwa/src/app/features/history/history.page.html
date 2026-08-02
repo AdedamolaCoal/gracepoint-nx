@@ -1,33 +1,46 @@
-<ion-header>
-  <ion-toolbar>
+<ion-header class="ion-no-border">
+  <ion-toolbar class="page-toolbar">
     <ion-title>Attendance History</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content>
+<ion-content class="history-content">
   <ion-refresher slot="fixed" (ionRefresh)="onRefresh($event)">
     <ion-refresher-content></ion-refresher-content>
   </ion-refresher>
 
-  @if (historyStore.isLoading()) {
+  @if (historyStore.isInitialLoading()) {
     <div class="centered-state">
       <ion-spinner name="crescent"></ion-spinner>
+      <p>Loading records...</p>
     </div>
   } @else if (historyStore.entries().length === 0) {
     <div class="centered-state">
       <p>No attendance records yet.</p>
     </div>
   } @else {
-    <ion-list>
-      @for (entry of historyStore.entries(); track entry.serviceEventId) {
-        <ion-item>
-          <ion-label>
-            <h2>{{ entry.serviceName }}</h2>
-            <p>{{ entry.serviceDate | date: 'EEEE, MMM d, y' }}</p>
-          </ion-label>
-          <app-status-pill [status]="entry.status" slot="end" />
-        </ion-item>
+    <div class="history-list">
+      @for (entry of historyStore.entries(); track $index) {
+        <div class="history-card">
+          <div class="history-card-details">
+            <h3 class="history-card-name">{{ entry.serviceName }}</h3>
+            <p class="history-card-date">{{ entry.serviceDate | date: 'EEEE, MMM d, y' }}</p>
+          </div>
+          <div class="history-card-status">
+            <app-status-pill [status]="entry.status" />
+          </div>
+        </div>
       }
-    </ion-list>
+    </div>
+
+    <ion-infinite-scroll
+      [disabled]="!historyStore.hasNextPage()"
+      (ionInfinite)="onIonInfinite($event)"
+    >
+      <ion-infinite-scroll-content
+        loadingSpinner="crescent"
+        loadingText="Loading more records..."
+      ></ion-infinite-scroll-content>
+    </ion-infinite-scroll>
   }
 </ion-content>
