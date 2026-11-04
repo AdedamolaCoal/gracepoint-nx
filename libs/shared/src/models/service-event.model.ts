@@ -9,6 +9,11 @@ export interface ServiceEventSummary {
   clockInWindowStart: string;
   clockInWindowEnd: string;
   lateAfter?: string;
+  scheduledStart?: string;
+  scheduledEnd?: string;
+  churchLat?: number;
+  churchLng?: number;
+  geoRadiusMeters?: number;
   qrToken?: string;
   status: 'Scheduled' | 'Open' | 'Closed';
 }

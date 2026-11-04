@@ -37,6 +37,21 @@ export const routes: Routes = [
     pathMatch: "full",
   },
   {
+    // Deep link used by the registration QR code: <worker-base>/register?token=...
+    path: "register",
+    component: AuthLayoutComponent,
+    canMatch: [guestGuard],
+    children: [
+      {
+        path: "",
+        loadComponent: () =>
+          import("@features/auth/register/register.page").then(
+            (r) => r.RegisterPage,
+          ),
+      },
+    ],
+  },
+  {
     path: "set-pin",
     component: AuthLayoutComponent,
     canMatch: [pinSetupRequiredGuard],

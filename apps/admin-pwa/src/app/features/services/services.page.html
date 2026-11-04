@@ -66,7 +66,7 @@
                 <div class="service-card__info-row">
                   <div class="service-card__info-item">
                     <ion-icon name="time-outline"></ion-icon>
-                    <span>{{ service.clockInWindowStart | date:'shortTime' }} - {{ service.clockInWindowEnd | date:'shortTime' }}</span>
+                    <span>{{ timeLabel(service).start }} - {{ timeLabel(service).end }}</span>
                   </div>
                 </div>
 

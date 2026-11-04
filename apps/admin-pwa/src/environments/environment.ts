@@ -1,7 +1,7 @@
-import { Config } from '@gracepoint/shared';
+import { Config } from "@gracepoint/shared";
 
 export const environment: Config = {
   production: false,
-  baseUrl: 'http://localhost:8080',
-  workerBaseUrl: 'http://localhost:3900',
+  baseUrl: "https://crudely-kilogram-snooper.ngrok-free.dev",
+  workerBaseUrl: "https://z4qq2pnl-3900.uks1.devtunnels.ms/",
 };

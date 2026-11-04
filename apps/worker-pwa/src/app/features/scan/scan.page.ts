@@ -80,15 +80,12 @@ export class ScanPage implements OnDestroy {
           this.state.set('scanning');
           const { barcodes } = await BarcodeScanner.scan();
           if (barcodes && barcodes.length > 0) {
-            const token = this.extractToken(barcodes[0].rawValue || '');
-            if (token) {
-              await this.submitClockIn(token);
-              return;
-            } else {
-              this.errorMessage.set('Invalid QR code format.');
-              this.state.set('idle');
+            if (await this.processBarcode(barcodes[0].rawValue || '')) {
               return;
             }
+            this.errorMessage.set('Invalid QR code format.');
+            this.state.set('idle');
+            return;
           }
           this.state.set('idle');
           return;
@@ -129,7 +126,7 @@ export class ScanPage implements OnDestroy {
     }
   }
 
-  private scanVideoFrame(): void {
+  private async scanVideoFrame(): Promise<void> {
     if (this.state() !== 'scanning') {
       return;
     }
@@ -147,10 +144,8 @@ export class ScanPage implements OnDestroy {
         });
 
         if (code && code.data) {
-          const token = this.extractToken(code.data);
-          if (token) {
+          if (await this.processBarcode(code.data)) {
             this.stopWebCamera();
-            this.submitClockIn(token);
             return;
           }
         }
@@ -203,9 +198,7 @@ export class ScanPage implements OnDestroy {
         const code = jsQR(imageData.data, imageData.width, imageData.height);
 
         if (code && code.data) {
-          const token = this.extractToken(code.data);
-          if (token) {
-            await this.submitClockIn(token);
+          if (await this.processBarcode(code.data)) {
             return;
           }
         }
@@ -257,6 +250,42 @@ export class ScanPage implements OnDestroy {
 
     // 3. Raw token string fallback
     return trimmed;
+  }
+
+  /**
+   * Decides what to do with a scanned barcode.
+   * - A registration QR (URL path containing /register) redirects to the registration page.
+   * - Any other valid QR is treated as a service check-in token.
+   * Returns true if the barcode was handled, false if it was invalid.
+   */
+  private async processBarcode(rawValue: string): Promise<boolean> {
+    if (!rawValue) return false;
+    const trimmed = rawValue.trim();
+    if (!trimmed) return false;
+
+    // Registration QR codes point at <workerBaseUrl>/register?token=...
+    if (trimmed.startsWith('http://') || trimmed.startsWith('https://')) {
+      try {
+        const url = new URL(trimmed);
+        const isRegisterLink =
+          url.pathname === '/register' ||
+          url.pathname.endsWith('/register') ||
+          url.pathname.endsWith('/registration');
+        if (isRegisterLink) {
+          const token = url.searchParams.get('token') || '';
+          this._router.navigateByUrl(`/auth/register${token ? `?token=${encodeURIComponent(token)}` : ''}`);
+          return true;
+        }
+      } catch {
+        // Not a parseable URL - fall through to token handling
+      }
+    }
+
+    const token = this.extractToken(trimmed);
+    if (!token) return false;
+
+    this.submitClockIn(token);
+    return true;
   }
 
   private async submitClockIn(token: string): Promise<void> {

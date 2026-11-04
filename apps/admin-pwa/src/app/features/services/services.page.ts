@@ -148,26 +148,34 @@ export class ServicesPage {
     this.name.set(service.name || '');
     this.serviceDate.set(service.serviceDate || new Date().toISOString());
 
-    // Format start/end time if available
-    const startTimeStr = service.clockInWindowStart
-      ? service.clockInWindowStart.includes('T')
-        ? service.clockInWindowStart.split('T')[1].substring(0, 5)
-        : service.clockInWindowStart.substring(0, 5)
-      : '08:00';
-    const endTimeStr = service.clockInWindowEnd
-      ? service.clockInWindowEnd.includes('T')
-        ? service.clockInWindowEnd.split('T')[1].substring(0, 5)
-        : service.clockInWindowEnd.substring(0, 5)
-      : '12:00';
+    // Prefer the scheduled (wall-clock) times, since within the SQL UTC / browser
+    // timezone drift otherwise shifts the hours incorrectly.
+    const startTimeStr = this.toTimeLabel(service.scheduledStart) ||
+      this.toTimeLabel(service.clockInWindowStart) || '08:00';
+    const endTimeStr = this.toTimeLabel(service.scheduledEnd) ||
+      this.toTimeLabel(service.clockInWindowEnd) || '12:00';
 
     this.scheduledStart.set(startTimeStr);
     this.scheduledEnd.set(endTimeStr);
     this.lateAfterMinutes.set(service.lateAfterMinutes || 30);
-    this.churchLat.set(service.churchLat || 0);
-    this.churchLng.set(service.churchLng || 0);
+    this.churchLat.set(typeof service.churchLat === 'number' ? service.churchLat : 0);
+    this.churchLng.set(typeof service.churchLng === 'number' ? service.churchLng : 0);
     this.geoRadiusMeters.set(service.geoRadiusMeters || 150);
 
     this.showCreateModal.set(true);
+  }
+
+  private toTimeLabel(value?: string): string {
+    if (!value) return '';
+    const s = value.includes('T') ? value.split('T')[1].substring(0, 5) : value.substring(0, 5);
+    return s;
+  }
+
+  timeLabel(service: any): { start: string; end: string } {
+    return {
+      start: this.toTimeLabel(service.scheduledStart) || this.toTimeLabel(service.clockInWindowStart) || '--:--',
+      end: this.toTimeLabel(service.scheduledEnd) || this.toTimeLabel(service.clockInWindowEnd) || '--:--',
+    };
   }
 
   useCurrentLocation(): void {
