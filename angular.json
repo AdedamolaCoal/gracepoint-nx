@@ -3,18 +3,32 @@
   "version": 1,
   "cli": {
     "packageManager": "yarn",
-    "schematicCollections": ["@ionic/angular-toolkit"]
+    "schematicCollections": [
+      "@ionic/angular-toolkit"
+    ]
   },
   "newProjectRoot": "apps",
   "projects": {
     "admin-pwa": {
       "projectType": "application",
       "schematics": {
-        "@schematics/angular:component": { "style": "scss", "skipTests": true },
-        "@schematics/angular:directive": { "skipTests": true },
-        "@schematics/angular:interceptor": { "skipTests": true },
-        "@schematics/angular:service": { "skipTests": true, "type": "service" },
-        "@schematics/angular:guard": { "skipTests": true },
+        "@schematics/angular:component": {
+          "style": "scss",
+          "skipTests": true
+        },
+        "@schematics/angular:directive": {
+          "skipTests": true
+        },
+        "@schematics/angular:interceptor": {
+          "skipTests": true
+        },
+        "@schematics/angular:service": {
+          "skipTests": true,
+          "type": "service"
+        },
+        "@schematics/angular:guard": {
+          "skipTests": true
+        },
         "@ionic/angular-toolkit:page": {
           "standalone": true,
           "skipTests": true
@@ -27,9 +41,15 @@
           "standalone": true,
           "skipTests": true
         },
-        "@ionic/angular-toolkit:pipe": { "skipTests": true },
-        "@ionic/angular-toolkit:interceptor": { "skipTests": true },
-        "@ionic/angular-toolkit:guard": { "skipTests": true }
+        "@ionic/angular-toolkit:pipe": {
+          "skipTests": true
+        },
+        "@ionic/angular-toolkit:interceptor": {
+          "skipTests": true
+        },
+        "@ionic/angular-toolkit:guard": {
+          "skipTests": true
+        }
       },
       "root": "apps/admin-pwa",
       "sourceRoot": "apps/admin-pwa/src",
@@ -49,19 +69,39 @@
             ],
             "styles": [
               "apps/admin-pwa/src/styles.scss",
-              { "input": "node_modules/@ionic/angular/css/core.css" },
-              { "input": "node_modules/@ionic/angular/css/normalize.css" },
-              { "input": "node_modules/@ionic/angular/css/structure.css" },
-              { "input": "node_modules/@ionic/angular/css/typography.css" },
-              { "input": "node_modules/@ionic/angular/css/display.css" },
-              { "input": "node_modules/@ionic/angular/css/padding.css" },
-              { "input": "node_modules/@ionic/angular/css/float-elements.css" },
-              { "input": "node_modules/@ionic/angular/css/text-alignment.css" },
+              {
+                "input": "node_modules/@ionic/angular/css/core.css"
+              },
+              {
+                "input": "node_modules/@ionic/angular/css/normalize.css"
+              },
+              {
+                "input": "node_modules/@ionic/angular/css/structure.css"
+              },
+              {
+                "input": "node_modules/@ionic/angular/css/typography.css"
+              },
+              {
+                "input": "node_modules/@ionic/angular/css/display.css"
+              },
+              {
+                "input": "node_modules/@ionic/angular/css/padding.css"
+              },
+              {
+                "input": "node_modules/@ionic/angular/css/float-elements.css"
+              },
+              {
+                "input": "node_modules/@ionic/angular/css/text-alignment.css"
+              },
               {
                 "input": "node_modules/@ionic/angular/css/text-transformation.css"
               },
-              { "input": "node_modules/@ionic/angular/css/flex-utils.css" },
-              { "input": "apps/admin-pwa/src/theme/variables.css" }
+              {
+                "input": "node_modules/@ionic/angular/css/flex-utils.css"
+              },
+              {
+                "input": "apps/admin-pwa/src/theme/variables.css"
+              }
             ]
           },
           "configurations": {
@@ -88,8 +128,13 @@
                   "maximumError": "16kB"
                 }
               ],
-
-              "outputHashing": "all"
+              "outputHashing": "all",
+              "fileReplacements": [
+                {
+                  "replace": "apps/admin-pwa/src/environments/environment.ts",
+                  "with": "apps/admin-pwa/src/environments/environment.prod.ts"
+                }
+              ]
             },
             "development": {
               "optimization": false,
@@ -102,8 +147,12 @@
         "serve": {
           "builder": "@angular/build:dev-server",
           "configurations": {
-            "production": { "buildTarget": "admin-pwa:build:production" },
-            "development": { "buildTarget": "admin-pwa:build:development" }
+            "production": {
+              "buildTarget": "admin-pwa:build:production"
+            },
+            "development": {
+              "buildTarget": "admin-pwa:build:development"
+            }
           },
           "defaultConfiguration": "development",
           "options": {
@@ -112,17 +161,30 @@
             "allowedHosts": true
           }
         },
-        "test": { "builder": "@angular/build:unit-test" }
+        "test": {
+          "builder": "@angular/build:unit-test"
+        }
       }
     },
     "worker-pwa": {
       "projectType": "application",
       "schematics": {
-        "@schematics/angular:component": { "style": "scss" },
-        "@schematics/angular:directive": { "skipTests": true },
-        "@schematics/angular:interceptor": { "skipTests": true },
-        "@schematics/angular:service": { "skipTests": true, "type": "service" },
-        "@schematics/angular:guard": { "skipTests": true },
+        "@schematics/angular:component": {
+          "style": "scss"
+        },
+        "@schematics/angular:directive": {
+          "skipTests": true
+        },
+        "@schematics/angular:interceptor": {
+          "skipTests": true
+        },
+        "@schematics/angular:service": {
+          "skipTests": true,
+          "type": "service"
+        },
+        "@schematics/angular:guard": {
+          "skipTests": true
+        },
         "@ionic/angular-toolkit:page": {
           "standalone": true,
           "skipTests": true
@@ -135,9 +197,15 @@
           "standalone": true,
           "skipTests": true
         },
-        "@ionic/angular-toolkit:pipe": { "skipTests": true },
-        "@ionic/angular-toolkit:interceptor": { "skipTests": true },
-        "@ionic/angular-toolkit:guard": { "skipTests": true }
+        "@ionic/angular-toolkit:pipe": {
+          "skipTests": true
+        },
+        "@ionic/angular-toolkit:interceptor": {
+          "skipTests": true
+        },
+        "@ionic/angular-toolkit:guard": {
+          "skipTests": true
+        }
       },
       "root": "apps/worker-pwa",
       "sourceRoot": "apps/worker-pwa/src",
@@ -158,19 +226,39 @@
             ],
             "styles": [
               "apps/worker-pwa/src/styles.scss",
-              { "input": "node_modules/@ionic/angular/css/core.css" },
-              { "input": "node_modules/@ionic/angular/css/normalize.css" },
-              { "input": "node_modules/@ionic/angular/css/structure.css" },
-              { "input": "node_modules/@ionic/angular/css/typography.css" },
-              { "input": "node_modules/@ionic/angular/css/display.css" },
-              { "input": "node_modules/@ionic/angular/css/padding.css" },
-              { "input": "node_modules/@ionic/angular/css/float-elements.css" },
-              { "input": "node_modules/@ionic/angular/css/text-alignment.css" },
+              {
+                "input": "node_modules/@ionic/angular/css/core.css"
+              },
+              {
+                "input": "node_modules/@ionic/angular/css/normalize.css"
+              },
+              {
+                "input": "node_modules/@ionic/angular/css/structure.css"
+              },
+              {
+                "input": "node_modules/@ionic/angular/css/typography.css"
+              },
+              {
+                "input": "node_modules/@ionic/angular/css/display.css"
+              },
+              {
+                "input": "node_modules/@ionic/angular/css/padding.css"
+              },
+              {
+                "input": "node_modules/@ionic/angular/css/float-elements.css"
+              },
+              {
+                "input": "node_modules/@ionic/angular/css/text-alignment.css"
+              },
               {
                 "input": "node_modules/@ionic/angular/css/text-transformation.css"
               },
-              { "input": "node_modules/@ionic/angular/css/flex-utils.css" },
-              { "input": "apps/worker-pwa/src/theme/variables.css" }
+              {
+                "input": "node_modules/@ionic/angular/css/flex-utils.css"
+              },
+              {
+                "input": "apps/worker-pwa/src/theme/variables.css"
+              }
             ]
           },
           "configurations": {
@@ -197,7 +285,13 @@
                   "maximumError": "16kB"
                 }
               ],
-              "outputHashing": "all"
+              "outputHashing": "all",
+              "fileReplacements": [
+                {
+                  "replace": "apps/worker-pwa/src/environments/environment.ts",
+                  "with": "apps/worker-pwa/src/environments/environment.prod.ts"
+                }
+              ]
             },
             "development": {
               "optimization": false,
@@ -210,8 +304,12 @@
         "serve": {
           "builder": "@angular/build:dev-server",
           "configurations": {
-            "production": { "buildTarget": "worker-pwa:build:production" },
-            "development": { "buildTarget": "worker-pwa:build:development" }
+            "production": {
+              "buildTarget": "worker-pwa:build:production"
+            },
+            "development": {
+              "buildTarget": "worker-pwa:build:development"
+            }
           },
           "defaultConfiguration": "development",
           "options": {
@@ -220,12 +318,18 @@
             "allowedHosts": true
           }
         },
-        "test": { "builder": "@angular/build:unit-test" }
+        "test": {
+          "builder": "@angular/build:unit-test"
+        }
       }
     }
   },
   "schematics": {
-    "@ionic/angular-toolkit:component": { "styleext": "scss" },
-    "@ionic/angular-toolkit:page": { "styleext": "scss" }
+    "@ionic/angular-toolkit:component": {
+      "styleext": "scss"
+    },
+    "@ionic/angular-toolkit:page": {
+      "styleext": "scss"
+    }
   }
 }
